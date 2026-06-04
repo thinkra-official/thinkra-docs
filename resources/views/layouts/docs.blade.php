@@ -38,25 +38,15 @@
             <div class="docs-topbar-start">
                 @isset($sections)
                 <button type="button"
-                        id="docs-burger-open"
-                        class="docs-burger-btn"
-                        aria-haspopup="dialog"
-                        aria-controls="docs-course-menu"
+                        id="docs-slide-open"
+                        class="docs-slide-trigger"
                         aria-expanded="false"
+                        aria-controls="docs-slide-panel"
                         aria-label="فتح محتوى الدورة">
-                    <span class="docs-burger-btn-icon" aria-hidden="true">
-                        <svg class="docs-burger-svg docs-burger-svg--menu" width="22" height="22" viewBox="0 0 24 24" fill="none">
-                            <path d="M4 7h16M4 12h16M4 17h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M17 17l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                        <svg class="docs-burger-svg docs-burger-svg--close" width="22" height="22" viewBox="0 0 24 24" fill="none">
-                            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                    </span>
-                    <span class="docs-burger-btn-copy">
-                        <span class="docs-burger-btn-title">المحتوى</span>
-                        <span class="docs-burger-btn-sub">الدورة</span>
-                    </span>
+                    <svg class="docs-slide-trigger__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="docs-slide-trigger__text">المحتوى</span>
                 </button>
                 @endisset
                 <a href="{{ route('docs.search') }}" class="docs-brand" aria-label="THINKRA">
@@ -77,9 +67,22 @@
         </div>
     </header>
 
+    @isset($sections)
+    @include('docs.partials.course-slide', [
+        'course' => $course,
+        'sections' => $sections,
+        'currentLesson' => $currentLesson ?? null,
+        'preview' => $preview ?? false,
+        'progressStats' => $progressStats ?? null,
+        'completedLessonIds' => $progressStats['completedIds'] ?? [],
+        'expandedSections' => $expandedSections ?? [],
+        'expandedSubSections' => $expandedSubSections ?? [],
+    ])
+    @endisset
+
     <div class="docs-viewer-layout @unless(isset($sections)) docs-viewer-layout--standalone @endunless">
         @isset($sections)
-        <aside id="docs-sidebar-panel" class="docs-course-sidebar-panel docs-sidebar-desktop" aria-label="محتوى الدورة">
+        <aside class="docs-course-sidebar-panel docs-sidebar-desktop" aria-label="محتوى الدورة — سطح المكتب">
             @include('docs.partials.course-sidebar', [
                 'course' => $course,
                 'sections' => $sections,
@@ -97,19 +100,6 @@
             @yield('content')
         </main>
     </div>
-
-    @isset($sections)
-    @include('docs.partials.course-menu-modal', [
-        'course' => $course,
-        'sections' => $sections,
-        'currentLesson' => $currentLesson ?? null,
-        'preview' => $preview ?? false,
-        'progressStats' => $progressStats ?? null,
-        'completedLessonIds' => $progressStats['completedIds'] ?? [],
-        'expandedSections' => $expandedSections ?? [],
-        'expandedSubSections' => $expandedSubSections ?? [],
-    ])
-    @endisset
 
     @isset($course)
     @php

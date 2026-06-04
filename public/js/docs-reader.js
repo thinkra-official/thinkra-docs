@@ -17,6 +17,76 @@
         updateScroll();
     }
 
+    /* Mobile: slide-in panel from the right */
+    const slideOpen = document.getElementById('docs-slide-open');
+    const slideClose = document.getElementById('docs-slide-close');
+    const slideOverlay = document.getElementById('docs-slide-overlay');
+    const slidePanel = document.getElementById('docs-slide-panel');
+
+    function slideIsMobile() {
+        return window.matchMedia('(max-width: 1023px)').matches;
+    }
+
+    function setSlideOpen(open) {
+        if (!slidePanel || !slideIsMobile()) {
+            return;
+        }
+        document.body.classList.toggle('docs-slide-open', open);
+        if (slideOpen) {
+            slideOpen.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        slidePanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+        if (slideOverlay) {
+            if (open) {
+                slideOverlay.removeAttribute('hidden');
+            } else {
+                slideOverlay.setAttribute('hidden', '');
+            }
+        }
+    }
+
+    if (slideOpen && slidePanel) {
+        slideOpen.addEventListener('click', function (e) {
+            e.preventDefault();
+            setSlideOpen(!document.body.classList.contains('docs-slide-open'));
+        });
+
+        if (slideClose) {
+            slideClose.addEventListener('click', function (e) {
+                e.preventDefault();
+                setSlideOpen(false);
+            });
+        }
+
+        if (slideOverlay) {
+            slideOverlay.addEventListener('click', function () {
+                setSlideOpen(false);
+            });
+        }
+
+        slidePanel.querySelectorAll('.course-sidebar a').forEach(function (link) {
+            link.addEventListener('click', function () {
+                setSlideOpen(false);
+            });
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && document.body.classList.contains('docs-slide-open')) {
+                setSlideOpen(false);
+            }
+        });
+
+        window.addEventListener('resize', function () {
+            if (!slideIsMobile()) {
+                setSlideOpen(false);
+            }
+        });
+    }
+
+    window.docsCloseCourseSlide = function () {
+        setSlideOpen(false);
+    };
+
     /* Scroll active lesson into view in sidebar */
     const activeLesson = document.querySelector('.course-sidebar-lesson.is-active');
     if (activeLesson) {
