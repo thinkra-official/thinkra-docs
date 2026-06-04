@@ -3,7 +3,7 @@
 @section('title', $lesson->title)
 
 @push('head')
-<link rel="stylesheet" href="{{ asset_version('css/lesson-content.css') }}">
+<link rel="stylesheet" href="{{ asset('css/lesson-content.css') }}?v={{ file_exists($p = public_path('css/lesson-content.css')) ? filemtime($p) : time() }}">
 @endpush
 
 @php

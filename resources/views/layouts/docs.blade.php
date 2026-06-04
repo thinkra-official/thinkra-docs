@@ -22,9 +22,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{{ asset_version('css/application-logo.css') }}">
-    <link rel="stylesheet" href="{{ asset_version('css/docs-reader.css') }}">
-    <link rel="stylesheet" href="{{ asset_version('css/lesson-content.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/application-logo.css') }}?v={{ file_exists($p = public_path('css/application-logo.css')) ? filemtime($p) : time() }}">
+    <link rel="stylesheet" href="{{ asset('css/docs-reader.css') }}?v={{ file_exists($p = public_path('css/docs-reader.css')) ? filemtime($p) : time() }}">
+    <link rel="stylesheet" href="{{ asset('css/lesson-content.css') }}?v={{ file_exists($p = public_path('css/lesson-content.css')) ? filemtime($p) : time() }}">
     @stack('head')
 </head>
 <body class="docs-shell">
@@ -121,7 +121,7 @@
     </script>
     @endisset
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
-    <script src="{{ asset_version('js/docs-reader.js') }}" defer></script>
+    <script src="{{ asset('js/docs-reader.js') }}?v={{ file_exists($p = public_path('js/docs-reader.js')) ? filemtime($p) : time() }}" defer></script>
     @stack('scripts')
 </body>
 </html>

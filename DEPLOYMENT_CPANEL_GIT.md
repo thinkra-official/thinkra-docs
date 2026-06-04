@@ -158,9 +158,23 @@ php artisan view:cache
 
 1. تأكد أن `git pull` نجح وأن ملفات `public/css/docs-reader.css` و`public/js/docs-reader.js` محدّثة.
 2. نفّذ `php artisan view:clear` (القوالب تُخزَّن مؤقتاً).
-3. اختياري: في `.env` ضع `APP_ASSET_VERSION=20260604` (أي رقم/تاريخ جديد) ثم `php artisan config:cache` لإجبار كل المتصفحات على تحميل الأصول من جديد.
-4. على iPhone: Safari → مسح ذاكرة التخزين المؤقت، أو أغلق التبويب وافتح الرابط من جديد (ليس من سجل «الأخيرة» فقط).
-5. في Network على الجوال تحقق أن `docs-reader.css` يحتوي `?v=` برقم حديث.
+3. على iPhone: Safari → مسح ذاكرة التخزين المؤقت، أو أغلق التبويب وافتح الرابط من جديد (ليس من سجل «الأخيرة» فقط).
+4. في Network على الجوال تحقق أن `docs-reader.css` يحتوي `?v=` برقم حديث (يُولَّد تلقائياً من تاريخ الملف في القوالب — لا يحتاج Composer).
+
+### إذا ظهر خطأ `Failed opening required .../app/helpers.php` (بدون Composer)
+
+بعد `git pull` احذف السطر الذي يشير إلى `app/helpers.php` من:
+
+- `vendor/composer/autoload_files.php`
+- `vendor/composer/autoload_static.php` (قسم `$files` في أعلى الملف)
+
+أو شغّل السكربت (بدون Composer):
+
+```bash
+php scripts/remove-helpers-autoload.php
+php artisan optimize:clear
+php artisan view:clear
+```
 
 عند تغيير `.env` فقط:
 

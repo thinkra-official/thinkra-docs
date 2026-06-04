@@ -22,10 +22,4 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
-
-    /*
-    | Optional global cache-bust for public CSS/JS (asset_version helper).
-    | When null, each file uses its own modification time (?v=).
-    */
-    'asset_version' => env('APP_ASSET_VERSION'),
 ];

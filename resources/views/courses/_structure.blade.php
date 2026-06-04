@@ -621,7 +621,7 @@
 @endpush
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="{{ asset_version('js/course-structure-sortable.js') }}"></script>
+<script src="{{ asset('js/course-structure-sortable.js') }}?v={{ file_exists($p = public_path('js/course-structure-sortable.js')) ? filemtime($p) : time() }}"></script>
 @endpush
 @endif
 

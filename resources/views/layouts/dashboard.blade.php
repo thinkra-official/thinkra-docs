@@ -53,5 +53,5 @@
 @endsection
 
 @push('head')
-<link rel="stylesheet" href="{{ asset_version('css/thinkra-dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset('css/thinkra-dashboard.css') }}?v={{ file_exists($p = public_path('css/thinkra-dashboard.css')) ? filemtime($p) : time() }}">
 @endpush
