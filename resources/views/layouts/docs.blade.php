@@ -56,7 +56,7 @@
 
     <div class="docs-layout">
         @isset($sections)
-        <aside id="docs-sidebar-panel" class="docs-sidebar-panel">
+        <aside id="docs-sidebar-panel" class="docs-sidebar-panel course-sidebar">
             @include('docs.partials.sidebar', [
                 'course' => $course,
                 'sections' => $sections,

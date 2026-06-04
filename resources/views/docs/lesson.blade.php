@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="docs-with-toc">
-    <article class="docs-article min-w-0">
+    <article class="docs-article main-lesson-content min-w-0">
         @if(count($toc) > 0)
         <nav class="docs-toc-mobile docs-toc rounded-xl border p-3 mb-6" style="border-color:var(--docs-border);background:var(--docs-surface)" aria-label="فهرس المحتوى">
             <p class="font-semibold text-sm mb-2" style="color:var(--docs-accent-dark)">في هذه الصفحة</p>
@@ -56,7 +56,7 @@
     </article>
 
     @if(count($toc) > 0)
-    <aside class="docs-toc-desktop docs-toc hidden xl:block" aria-label="فهرس المحتوى">
+    <aside class="docs-toc-desktop docs-toc page-toc hidden lg:block" aria-label="فهرس المحتوى">
         <p class="font-semibold mb-3" style="color:var(--docs-accent-dark)">في هذه الصفحة</p>
         @foreach($toc as $item)
         <a href="#{{ $item['id'] }}" class="level-{{ $item['level'] }}">{{ $item['text'] }}</a>

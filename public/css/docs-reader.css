@@ -9,6 +9,8 @@
     --docs-accent: #9e27b5;
     --docs-accent-dark: #0f206c;
     --docs-progress: #9e27b5;
+    --docs-header-height: 3.5rem;
+    --docs-sticky-top: 4.5rem;
 }
 
 html.docs-dark {
@@ -54,23 +56,42 @@ html.docs-dark {
 
 .docs-layout {
     display: grid;
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 280px minmax(0, 1fr);
+    align-items: start;
     max-width: 1400px;
     margin: 0 auto;
+}
+
+/* Course navigation — sticky on the right in RTL while the page scrolls */
+.docs-sidebar-panel,
+.course-sidebar {
+    position: sticky;
+    top: var(--docs-sticky-top);
+    align-self: start;
+    max-height: calc(100vh - var(--docs-sticky-top));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    z-index: 30;
 }
 
 @media (max-width: 1023px) {
     .docs-layout {
         grid-template-columns: 1fr;
     }
-    .docs-sidebar-panel {
+    .docs-sidebar-panel,
+    .course-sidebar {
         display: none;
+        position: static;
+        max-height: none;
+        overflow: visible;
     }
-    .docs-sidebar-panel.is-open {
+    .docs-sidebar-panel.is-open,
+    .course-sidebar.is-open {
         display: block;
         position: fixed;
         inset: 0;
         z-index: 55;
+        max-height: none;
         background: var(--docs-sidebar);
         overflow-y: auto;
         padding: 1rem;
@@ -80,7 +101,7 @@ html.docs-dark {
 .docs-sidebar {
     background: var(--docs-sidebar);
     color: var(--docs-sidebar-text);
-    min-height: calc(100vh - 56px);
+    min-height: auto;
     padding: 1.25rem 1rem 2rem;
     font-size: 0.875rem;
 }
@@ -123,13 +144,17 @@ html.docs-dark {
 
 .docs-main {
     background: var(--docs-bg);
-    min-height: calc(100vh - 56px);
+    min-height: calc(100vh - var(--docs-header-height));
+    min-width: 0;
+    overflow: visible;
 }
 
-.docs-article {
-    max-width: 760px;
+.docs-article,
+.main-lesson-content {
+    max-width: 850px;
     margin: 0 auto;
     padding: 2rem 1.5rem 4rem;
+    min-width: 0;
 }
 
 .docs-article h1 {
@@ -149,7 +174,7 @@ html.docs-dark .docs-article h1 {
 }
 
 .docs-prose h1, .docs-prose h2, .docs-prose h3 {
-    scroll-margin-top: 5rem;
+    scroll-margin-top: var(--docs-sticky-top);
     font-weight: 700;
     margin: 1.5rem 0 0.75rem;
     color: var(--docs-accent-dark);
@@ -164,13 +189,21 @@ html.docs-dark .docs-prose h3 {
 .docs-prose img { max-width: 100%; height: auto; border-radius: 0.5rem; }
 
 .docs-toc {
-    position: sticky;
-    top: 5rem;
-    max-height: calc(100vh - 6rem);
-    overflow-y: auto;
     font-size: 0.8125rem;
     padding: 1rem;
-    border-right: 1px solid var(--docs-border);
+}
+
+/* In-page TOC — sticky on the left in RTL (lg+) */
+.docs-toc-desktop,
+.page-toc {
+    position: sticky;
+    top: var(--docs-sticky-top);
+    align-self: start;
+    max-height: calc(100vh - var(--docs-sticky-top));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-inline-start: 1px solid var(--docs-border);
+    border-inline-end: none;
 }
 
 .docs-toc a {
@@ -187,17 +220,44 @@ html.docs-dark .docs-prose h3 {
 
 .docs-with-toc {
     display: grid;
-    grid-template-columns: 1fr 220px;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    align-items: start;
+    gap: 0;
+    width: 100%;
+    overflow: visible;
 }
 
-@media (max-width: 1279px) {
-    .docs-with-toc { grid-template-columns: 1fr; }
-    .docs-toc-desktop { display: none; }
-    .docs-toc-mobile { display: block; margin-bottom: 1.5rem; }
+@media (max-width: 1023px) {
+    .docs-with-toc {
+        grid-template-columns: 1fr;
+    }
+    .docs-toc-desktop,
+    .page-toc {
+        display: none !important;
+        position: static;
+        max-height: none;
+        overflow: visible;
+    }
+    .docs-toc-mobile {
+        display: block;
+        margin-bottom: 1.5rem;
+        position: static;
+        max-height: none;
+        overflow: visible;
+        border: 1px solid var(--docs-border);
+        border-radius: 0.75rem;
+    }
 }
 
-@media (min-width: 1280px) {
-    .docs-toc-mobile { display: none; }
+@media (min-width: 1024px) {
+    .docs-toc-mobile {
+        display: none;
+    }
+}
+
+/* Preview banner pushes sticky offset down */
+.docs-shell:has(.docs-preview-banner) {
+    --docs-sticky-top: 5.75rem;
 }
 
 .docs-nav-footer {
