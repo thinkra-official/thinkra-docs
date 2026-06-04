@@ -28,6 +28,7 @@
      }"
      aria-label="محتوى الدورة">
 
+    @unless($hideHeader ?? false)
     <div class="course-sidebar-header">
         <a href="{{ ($preview ?? false) ? route('docs.preview.course', $course->slug) : route('docs.course', $course->slug) }}"
            class="course-sidebar-title">{{ $course->title }}</a>
@@ -44,6 +45,7 @@
         </div>
         @endif
     </div>
+    @endunless
 
     <div class="course-sidebar-tree">
         @foreach($sections as $section)

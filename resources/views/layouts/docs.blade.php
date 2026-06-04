@@ -42,13 +42,21 @@
                         class="docs-burger-btn"
                         aria-haspopup="dialog"
                         aria-controls="docs-course-menu"
-                        aria-expanded="false">
-                    <span class="docs-burger-icon" aria-hidden="true">
-                        <span class="docs-burger-line"></span>
-                        <span class="docs-burger-line"></span>
-                        <span class="docs-burger-line"></span>
+                        aria-expanded="false"
+                        aria-label="فتح محتوى الدورة">
+                    <span class="docs-burger-btn-icon" aria-hidden="true">
+                        <svg class="docs-burger-svg docs-burger-svg--menu" width="22" height="22" viewBox="0 0 24 24" fill="none">
+                            <path d="M4 7h16M4 12h16M4 17h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M17 17l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <svg class="docs-burger-svg docs-burger-svg--close" width="22" height="22" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
                     </span>
-                    <span class="docs-burger-label">محتوى الدورة</span>
+                    <span class="docs-burger-btn-copy">
+                        <span class="docs-burger-btn-title">المحتوى</span>
+                        <span class="docs-burger-btn-sub">الدورة</span>
+                    </span>
                 </button>
                 @endisset
                 <a href="{{ route('docs.search') }}" class="docs-brand" aria-label="THINKRA">

@@ -1,13 +1,39 @@
+@php
+    $menuProgress = $progressStats ?? ['total' => 0, 'completed' => 0, 'percent' => 0, 'remaining' => 0];
+@endphp
+
 <dialog id="docs-course-menu" class="docs-course-menu" aria-labelledby="docs-course-menu-title">
     <div class="docs-course-menu-sheet">
-        <header class="docs-course-menu-toolbar">
-            <h2 id="docs-course-menu-title" class="docs-course-menu-title">محتوى الدورة</h2>
+        <div class="docs-course-menu-grab" aria-hidden="true"></div>
+
+        <header class="docs-course-menu-head">
+            <div class="docs-course-menu-head-main">
+                <p class="docs-course-menu-eyebrow">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    محتوى الدورة
+                </p>
+                <h2 id="docs-course-menu-title" class="docs-course-menu-course-title">{{ $course->title }}</h2>
+                @if(($menuProgress['total'] ?? 0) > 0)
+                <div class="docs-course-menu-progress">
+                    <div class="docs-course-menu-progress-track" role="progressbar"
+                         aria-valuenow="{{ $menuProgress['percent'] }}" aria-valuemin="0" aria-valuemax="100">
+                        <div class="docs-course-menu-progress-fill" style="width: {{ $menuProgress['percent'] }}%"></div>
+                    </div>
+                    <span class="docs-course-menu-progress-label">
+                        {{ $menuProgress['completed'] }}/{{ $menuProgress['total'] }} دروس · {{ $menuProgress['percent'] }}%
+                    </span>
+                </div>
+                @endif
+            </div>
             <button type="button" class="docs-course-menu-close" data-docs-menu-close aria-label="إغلاق القائمة">
-                <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
             </button>
         </header>
+
         <div class="docs-course-menu-body">
             @include('docs.partials.course-sidebar', [
                 'course' => $course,
@@ -18,6 +44,7 @@
                 'completedLessonIds' => $completedLessonIds ?? [],
                 'expandedSections' => $expandedSections ?? [],
                 'expandedSubSections' => $expandedSubSections ?? [],
+                'hideHeader' => true,
             ])
         </div>
     </div>
@@ -31,6 +58,7 @@
 
     function setExpanded(open) {
         openBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        openBtn.classList.toggle('is-active', open);
     }
 
     function openMenu() {
@@ -41,7 +69,7 @@
                 menu.showModal();
                 return;
             } catch (err) {
-                /* fallback below */
+                /* fallback */
             }
         }
         menu.setAttribute('open', '');
