@@ -41,7 +41,9 @@
                     <span class="docs-drawer-label">محتوى الدورة</span>
                 </button>
                 @endisset
-                <a href="{{ route('docs.search') }}" class="docs-brand">Thinkra</a>
+                <a href="{{ route('docs.search') }}" class="docs-brand">
+                    <x-application-logo class="h-8 w-auto sm:h-9" />
+                </a>
                 @isset($course)
                 <span class="docs-topbar-course hidden sm:inline">{{ $course->title }}</span>
                 @endisset

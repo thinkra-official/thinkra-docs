@@ -10,13 +10,10 @@
     aria-label="قائمة الإدارة">
     <div class="p-6 border-b border-white/10">
         <a href="{{ route('admin.dashboard') }}"
-           class="flex items-center gap-3 relative z-10"
+           class="thinkra-sidebar-brand relative z-10"
            @click="sidebarOpen = false">
-            <div class="w-10 h-10 rounded-xl bg-thinkra-purple/30 flex items-center justify-center text-lg font-bold">T</div>
-            <div>
-                <span class="text-lg font-bold block leading-tight">Thinkra Docs</span>
-                <span class="text-xs text-white/50">لوحة الإدارة</span>
-            </div>
+            <x-application-logo variant="light" class="h-8 w-auto" />
+            <span class="text-xs text-white/50 mt-2 block">لوحة الإدارة</span>
         </a>
     </div>
 

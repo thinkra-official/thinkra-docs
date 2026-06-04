@@ -20,6 +20,14 @@
                         aria-label="القائمة">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
+                @php
+                    $headerLogoUrl = request()->routeIs('teacher.*')
+                        ? route('teacher.dashboard')
+                        : route('admin.dashboard');
+                @endphp
+                <a href="{{ $headerLogoUrl }}" class="lg:hidden thinkra-header-logo shrink-0" aria-label="THINKRA">
+                    <x-application-logo class="h-7 w-auto max-w-[7.5rem]" />
+                </a>
                 <div class="min-w-0">
                     <h1 class="text-lg font-bold text-thinkra-navy truncate">@yield('page-title', 'Thinkra Docs')</h1>
                     @hasSection('page-subtitle')

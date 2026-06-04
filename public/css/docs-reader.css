@@ -103,10 +103,18 @@ html.docs-theme-dark {
 }
 
 .docs-brand {
-    font-weight: 700;
-    font-size: 1.125rem;
-    color: var(--viewer-accent);
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    max-width: min(9.5rem, 38vw);
     text-decoration: none;
+    line-height: 0;
+}
+
+.docs-brand svg {
+    display: block;
+    height: 100%;
+    width: auto;
 }
 
 .docs-topbar-course {

@@ -5,9 +5,9 @@
 @section('body')
 <div class="min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-md">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-thinkra-navy">Thinkra Docs</h1>
-            <p class="text-slate-500 mt-2">تسجيل دخول الأستاذ برقم الهاتف</p>
+        <div class="flex flex-col items-center mb-8">
+            <x-application-logo class="h-10 w-auto sm:h-11" />
+            <p class="text-slate-500 mt-4 text-sm">تسجيل دخول الأستاذ برقم الهاتف</p>
         </div>
         <div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-8">
             @include('components.alert')
