@@ -51,11 +51,18 @@ class SubSectionController extends Controller
         return back()->with('success', 'تم إضافة القسم.');
     }
 
-    public function update(Request $request, Course $course, Section $section, SubSection $subSection): RedirectResponse
+    public function update(Request $request, int|string $courseId, int|string $sectionId, int|string $subSectionId): RedirectResponse
     {
+        Log::info('Teacher SubSectionController@update hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'subSectionId' => $subSectionId,
+        ]);
+
+        [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
+        $subSection = $this->resolveSubSectionInSection($section, $subSectionId);
+
         $this->ensureCourseAccess($course);
-        abort_unless($section->course_id === $course->id, 404);
-        abort_unless($subSection->section_id === $section->id, 404);
         $this->authorize('manage', $course);
 
         $validated = $request->validate([

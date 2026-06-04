@@ -11,7 +11,7 @@
             fn ($section) => $section->subSections->sum(fn ($sub) => $sub->lessons->count())
         );
     @endphp
-    <a href="{{ route('teacher.courses.show', $course) }}"
+    <a href="{{ route('teacher.courses.show', ['courseId' => $course->id]) }}"
        class="thinkra-card block p-6 hover:shadow-lg hover:border-thinkra-purple/20 transition group">
         <div class="flex items-start gap-4">
             <div class="thinkra-stat-icon bg-violet-100 text-thinkra-purple shrink-0 group-hover:scale-105 transition">

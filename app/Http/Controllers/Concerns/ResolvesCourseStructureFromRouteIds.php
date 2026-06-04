@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Concerns;
 
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\LessonVersion;
 use App\Models\Section;
 use App\Models\SubSection;
 
@@ -71,5 +72,13 @@ trait ResolvesCourseStructureFromRouteIds
             ->firstOrFail();
 
         return [$course, $section, $subSection, $lesson];
+    }
+
+    protected function resolveLessonVersion(Lesson $lesson, int|string $versionId): LessonVersion
+    {
+        return LessonVersion::query()
+            ->where('lesson_id', $lesson->id)
+            ->whereKey($versionId)
+            ->firstOrFail();
     }
 }

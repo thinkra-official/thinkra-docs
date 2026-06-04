@@ -18,8 +18,12 @@ class SectionController extends Controller
     use ResolvesCourseStructureFromRouteIds;
     use ResolvesSectionDeleteCounts;
 
-    public function store(Request $request, Course $course): RedirectResponse
+    public function store(Request $request, int|string $courseId): RedirectResponse
     {
+        Log::info('Admin SectionController@store hit', ['courseId' => $courseId]);
+
+        $course = Course::findOrFail($courseId);
+
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
         ]);
@@ -34,9 +38,14 @@ class SectionController extends Controller
         return back()->with('success', 'تم إضافة القسم.');
     }
 
-    public function update(Request $request, Course $course, Section $section): RedirectResponse
+    public function update(Request $request, int|string $courseId, int|string $sectionId): RedirectResponse
     {
-        abort_unless($section->course_id === $course->id, 404);
+        Log::info('Admin SectionController@update hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+        ]);
+
+        [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
 
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],

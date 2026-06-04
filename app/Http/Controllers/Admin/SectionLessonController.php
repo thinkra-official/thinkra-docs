@@ -22,9 +22,15 @@ class SectionLessonController extends Controller
     use ResolvesCourseStructureFromRouteIds;
     use ResolvesLessonPlacement;
 
-    public function show(Course $course, Section $section, Lesson $lesson): View
+    public function show(int|string $courseId, int|string $sectionId, int|string $lessonId): View
     {
-        $this->ensureSectionInCourse($course, $section);
+        Log::info('Admin SectionLessonController@show hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'lessonId' => $lessonId,
+        ]);
+
+        [$course, $section, $lesson] = $this->resolveDirectSectionLesson($courseId, $sectionId, $lessonId);
         $this->assertLessonBelongsToSection($lesson, $section);
 
         return view('admin.lessons.show', [

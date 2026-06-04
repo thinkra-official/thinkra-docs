@@ -43,20 +43,29 @@ class LessonController extends Controller
 
 
 
-    public function show(Course $course, Section $section, SubSection $subSection, Lesson $lesson): View
+    public function show(
+        int|string $courseId,
+        int|string $sectionId,
+        int|string $subSectionId,
+        int|string $lessonId
+    ): View {
+        Log::info('Admin LessonController@show hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'subSectionId' => $subSectionId,
+            'lessonId' => $lessonId,
+        ]);
 
-    {
-
-        $this->ensureSectionInCourse($course, $section);
-
-        $this->ensureSubSectionInSection($section, $subSection);
+        [$course, $section, $subSection, $lesson] = $this->resolveSubSectionLesson(
+            $courseId,
+            $sectionId,
+            $subSectionId,
+            $lessonId
+        );
 
         $this->assertLessonBelongsToSubSection($lesson, $subSection);
 
-
-
         return view('admin.lessons.show', compact('course', 'section', 'subSection', 'lesson'));
-
     }
 
 

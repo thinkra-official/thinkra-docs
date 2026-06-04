@@ -102,16 +102,27 @@ class LessonController extends Controller
 
 
 
-    public function edit(Course $course, Section $section, SubSection $subSection, Lesson $lesson): View
+    public function edit(
+        int|string $courseId,
+        int|string $sectionId,
+        int|string $subSectionId,
+        int|string $lessonId
+    ): View {
+        Log::info('Teacher LessonController@edit hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'subSectionId' => $subSectionId,
+            'lessonId' => $lessonId,
+        ]);
 
-    {
+        [$course, $section, $subSection, $lesson] = $this->resolveSubSectionLesson(
+            $courseId,
+            $sectionId,
+            $subSectionId,
+            $lessonId
+        );
 
         $this->ensureCourseAccess($course);
-
-        $this->ensureSectionInCourse($course, $section);
-
-        $this->ensureSubSectionInSection($section, $subSection);
-
         $this->assertLessonBelongsToSubSection($lesson, $subSection);
 
 
@@ -154,18 +165,29 @@ class LessonController extends Controller
 
 
 
-    public function update(UpdateLessonRequest $request, Course $course, Section $section, SubSection $subSection, Lesson $lesson): RedirectResponse
+    public function update(
+        UpdateLessonRequest $request,
+        int|string $courseId,
+        int|string $sectionId,
+        int|string $subSectionId,
+        int|string $lessonId
+    ): RedirectResponse {
+        Log::info('Teacher LessonController@update hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'subSectionId' => $subSectionId,
+            'lessonId' => $lessonId,
+        ]);
 
-    {
+        [$course, $section, $subSection, $lesson] = $this->resolveSubSectionLesson(
+            $courseId,
+            $sectionId,
+            $subSectionId,
+            $lessonId
+        );
 
         $this->ensureCourseAccess($course);
-
-        $this->ensureSectionInCourse($course, $section);
-
-        $this->ensureSubSectionInSection($section, $subSection);
-
         $this->assertLessonBelongsToSubSection($lesson, $subSection);
-
         $this->authorize('update', $lesson);
 
 
@@ -180,18 +202,29 @@ class LessonController extends Controller
 
 
 
-    public function updateStatus(Request $request, Course $course, Section $section, SubSection $subSection, Lesson $lesson): RedirectResponse
+    public function updateStatus(
+        Request $request,
+        int|string $courseId,
+        int|string $sectionId,
+        int|string $subSectionId,
+        int|string $lessonId
+    ): RedirectResponse {
+        Log::info('Teacher LessonController@updateStatus hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'subSectionId' => $subSectionId,
+            'lessonId' => $lessonId,
+        ]);
 
-    {
+        [$course, $section, $subSection, $lesson] = $this->resolveSubSectionLesson(
+            $courseId,
+            $sectionId,
+            $subSectionId,
+            $lessonId
+        );
 
         $this->ensureCourseAccess($course);
-
-        $this->ensureSectionInCourse($course, $section);
-
-        $this->ensureSubSectionInSection($section, $subSection);
-
         $this->assertLessonBelongsToSubSection($lesson, $subSection);
-
         $this->authorize('changeStatus', $lesson);
 
 

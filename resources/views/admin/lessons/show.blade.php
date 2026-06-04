@@ -2,6 +2,13 @@
 
 @section('title', $lesson->title)
 
+@php
+    $lessonShowUrl = $subSection
+        ? route('admin.courses.lessons.show', \App\Support\NestedCourseRoute::subSectionLesson($course, $section, $subSection, $lesson))
+        : route('admin.courses.section-lessons.show', \App\Support\NestedCourseRoute::sectionLesson($course, $section, $lesson));
+@endphp
+<!-- lesson show url: {{ $lessonShowUrl }} -->
+
 @section('content')
 <a href="{{ route('admin.courses.show', $course) }}" class="text-sm text-thinkra-purple hover:underline">← {{ $course->title }}</a>
 <h1 class="text-2xl font-bold text-thinkra-navy mt-2 mb-1">{{ $lesson->title }}</h1>

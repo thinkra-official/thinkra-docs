@@ -28,10 +28,18 @@
     }
     $versionShowUrlTemplate = route($versionShowRoute, $versionPlaceholder);
     $versionRestoreUrlTemplate = route($versionRestoreRoute, $versionPlaceholder);
+    $lessonUpdateUrl = route($updateRoute, $lessonRoute);
+    $lessonAutosaveUrl = route($autosaveRoute, $lessonRoute);
+    $lessonEditUrl = $inSubSection
+        ? route('teacher.lessons.edit', $lessonRoute)
+        : route('teacher.section-lessons.edit', $lessonRoute);
 @endphp
+<!-- lesson edit url: {{ $lessonEditUrl }} -->
+<!-- lesson update url: {{ $lessonUpdateUrl }} -->
+<!-- lesson autosave url: {{ $lessonAutosaveUrl }} -->
 
 @section('content')
-<a href="{{ route('teacher.courses.show', $course) }}" class="text-sm text-thinkra-purple hover:underline">← {{ $course->title }}</a>
+<a href="{{ route('teacher.courses.show', ['courseId' => $course->id]) }}" class="text-sm text-thinkra-purple hover:underline">← {{ $course->title }}</a>
 <div class="flex flex-wrap items-center justify-between gap-2 mt-1">
     <p class="text-xs text-slate-500">
         فصل: {{ $section->title }}
@@ -102,7 +110,7 @@
     </div>
 
     <div x-show="tab === 'edit'" x-cloak>
-        <form method="POST" action="{{ route($updateRoute, $lessonRoute) }}" class="space-y-5" id="lesson-form">
+        <form method="POST" action="{{ $lessonUpdateUrl }}" class="space-y-5" id="lesson-form">
             @csrf @method('PUT')
 
             <div class="thinkra-card p-5">
@@ -205,7 +213,7 @@
 window.ThinkraLessonEditor = {
     canEdit: true,
     lessonId: {{ $lesson->id }},
-    autosaveUrl: @json(route($autosaveRoute, $lessonRoute)),
+    autosaveUrl: @json($lessonAutosaveUrl),
     versionShowUrlTemplate: @json($versionShowUrlTemplate),
     versionRestoreUrlTemplate: @json($versionRestoreUrlTemplate),
     serverSavedAt: @json($lesson->updated_at?->toIso8601String()),

@@ -95,14 +95,17 @@ class SectionLessonController extends Controller
 
 
 
-    public function edit(Course $course, Section $section, Lesson $lesson): View
-
+    public function edit(int|string $courseId, int|string $sectionId, int|string $lessonId): View
     {
+        Log::info('Teacher SectionLessonController@edit hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'lessonId' => $lessonId,
+        ]);
+
+        [$course, $section, $lesson] = $this->resolveDirectSectionLesson($courseId, $sectionId, $lessonId);
 
         $this->ensureCourseAccess($course);
-
-        $this->ensureSectionInCourse($course, $section);
-
         $this->assertLessonBelongsToSection($lesson, $section);
 
 
@@ -145,16 +148,18 @@ class SectionLessonController extends Controller
 
 
 
-    public function update(UpdateLessonRequest $request, Course $course, Section $section, Lesson $lesson): RedirectResponse
-
+    public function update(UpdateLessonRequest $request, int|string $courseId, int|string $sectionId, int|string $lessonId): RedirectResponse
     {
+        Log::info('Teacher SectionLessonController@update hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'lessonId' => $lessonId,
+        ]);
+
+        [$course, $section, $lesson] = $this->resolveDirectSectionLesson($courseId, $sectionId, $lessonId);
 
         $this->ensureCourseAccess($course);
-
-        $this->ensureSectionInCourse($course, $section);
-
         $this->assertLessonBelongsToSection($lesson, $section);
-
         $this->authorize('update', $lesson);
 
 
@@ -169,16 +174,18 @@ class SectionLessonController extends Controller
 
 
 
-    public function updateStatus(Request $request, Course $course, Section $section, Lesson $lesson): RedirectResponse
-
+    public function updateStatus(Request $request, int|string $courseId, int|string $sectionId, int|string $lessonId): RedirectResponse
     {
+        Log::info('Teacher SectionLessonController@updateStatus hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'lessonId' => $lessonId,
+        ]);
+
+        [$course, $section, $lesson] = $this->resolveDirectSectionLesson($courseId, $sectionId, $lessonId);
 
         $this->ensureCourseAccess($course);
-
-        $this->ensureSectionInCourse($course, $section);
-
         $this->assertLessonBelongsToSection($lesson, $section);
-
         $this->authorize('changeStatus', $lesson);
 
 

@@ -13,21 +13,16 @@ final class NestedCourseRoute
     public static function section(Course $course, Section $section): array
     {
         return [
-            'course' => $course->getRouteKey(),
-            'section' => $section->getRouteKey(),
-        ];
-    }
-
-    /** Route parameters for destroying a section (raw IDs). */
-    public static function sectionDestroy(Course $course, Section $section): array
-    {
-        return [
             'courseId' => $course->id,
             'sectionId' => $section->id,
         ];
     }
 
-    /** Route parameters for destroying a sub-section (raw IDs). */
+    public static function sectionDestroy(Course $course, Section $section): array
+    {
+        return self::section($course, $section);
+    }
+
     public static function subSectionDestroy(Course $course, Section $section, SubSection $subSection): array
     {
         return [
@@ -39,29 +34,10 @@ final class NestedCourseRoute
 
     public static function subSection(Course $course, Section $section, SubSection $subSection): array
     {
-        return [
-            'course' => $course,
-            'section' => $section,
-            'subSection' => $subSection,
-        ];
+        return self::subSectionDestroy($course, $section, $subSection);
     }
 
-    /**
-     * Route parameters for a direct section lesson (not in a sub-section).
-     *
-     * @return array{course: int|string, section: int|string, lesson: int|string}
-     */
     public static function sectionLesson(Course $course, Section $section, Lesson $lesson): array
-    {
-        return [
-            'course' => $course->getRouteKey(),
-            'section' => $section->getRouteKey(),
-            'lesson' => $lesson->getRouteKey(),
-        ];
-    }
-
-    /** Route parameters for destroying a direct section lesson (raw IDs). */
-    public static function sectionLessonDestroy(Course $course, Section $section, Lesson $lesson): array
     {
         return [
             'courseId' => $course->id,
@@ -70,23 +46,12 @@ final class NestedCourseRoute
         ];
     }
 
-    /** درس داخل قسم فرعي */
-    public static function subSectionLesson(
-        Course $course,
-        Section $section,
-        SubSection $subSection,
-        Lesson $lesson
-    ): array {
-        return [
-            'course' => $course->getRouteKey(),
-            'section' => $section->getRouteKey(),
-            'subSection' => $subSection->getRouteKey(),
-            'lesson' => $lesson->getRouteKey(),
-        ];
+    public static function sectionLessonDestroy(Course $course, Section $section, Lesson $lesson): array
+    {
+        return self::sectionLesson($course, $section, $lesson);
     }
 
-    /** Route parameters for destroying a sub-section lesson (raw IDs). */
-    public static function subSectionLessonDestroy(
+    public static function subSectionLesson(
         Course $course,
         Section $section,
         SubSection $subSection,
@@ -98,6 +63,15 @@ final class NestedCourseRoute
             'subSectionId' => $subSection->id,
             'lessonId' => $lesson->id,
         ];
+    }
+
+    public static function subSectionLessonDestroy(
+        Course $course,
+        Section $section,
+        SubSection $subSection,
+        Lesson $lesson
+    ): array {
+        return self::subSectionLesson($course, $section, $subSection, $lesson);
     }
 
     public static function forLesson(
@@ -111,7 +85,7 @@ final class NestedCourseRoute
             : self::sectionLesson($course, $section, $lesson);
     }
 
-    /** @deprecated Use sectionLesson() or subSectionLesson() */
+    /** @deprecated Use subSectionLesson() */
     public static function lesson(
         Course $course,
         Section $section,
@@ -129,7 +103,7 @@ final class NestedCourseRoute
     ): array {
         return [
             ...self::sectionLesson($course, $section, $lesson),
-            'version' => $version,
+            'versionId' => $version instanceof LessonVersion ? $version->id : $version,
         ];
     }
 
@@ -142,7 +116,7 @@ final class NestedCourseRoute
     ): array {
         return [
             ...self::subSectionLesson($course, $section, $subSection, $lesson),
-            'version' => $version,
+            'versionId' => $version instanceof LessonVersion ? $version->id : $version,
         ];
     }
 }

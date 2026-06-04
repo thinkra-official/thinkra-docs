@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Teacher;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Services\CourseAccessService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class CourseController extends Controller
@@ -20,8 +21,12 @@ class CourseController extends Controller
         return view('teacher.courses.index', compact('courses'));
     }
 
-    public function show(Course $course): View
+    public function show(int|string $courseId): View
     {
+        Log::info('Teacher CourseController@show hit', ['courseId' => $courseId]);
+
+        $course = Course::findOrFail($courseId);
+
         if (! $this->access->canAccessCourse(auth()->user(), $course)) {
             abort(404);
         }

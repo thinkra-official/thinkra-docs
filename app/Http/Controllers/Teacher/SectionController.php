@@ -29,8 +29,12 @@ class SectionController extends Controller
         }
     }
 
-    public function store(Request $request, Course $course): RedirectResponse
+    public function store(Request $request, int|string $courseId): RedirectResponse
     {
+        Log::info('Teacher SectionController@store hit', ['courseId' => $courseId]);
+
+        $course = Course::findOrFail($courseId);
+
         $this->ensureCourseAccess($course);
         $this->authorize('manage', $course);
 
@@ -48,10 +52,16 @@ class SectionController extends Controller
         return back()->with('success', 'تم إضافة الفصل.');
     }
 
-    public function update(Request $request, Course $course, Section $section): RedirectResponse
+    public function update(Request $request, int|string $courseId, int|string $sectionId): RedirectResponse
     {
+        Log::info('Teacher SectionController@update hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+        ]);
+
+        [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
+
         $this->ensureCourseAccess($course);
-        abort_unless($section->course_id === $course->id, 404);
         $this->authorize('manage', $course);
 
         $validated = $request->validate([

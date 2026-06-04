@@ -46,7 +46,7 @@
 
     <button @click="openSection = !openSection" type="button" class="thinkra-btn-primary px-4 py-2 text-sm">+ إضافة فصل</button>
 
-    <form x-show="openSection" x-cloak method="POST" action="{{ $route('sections.store', ['course' => $course]) }}" class="mt-3 flex gap-2 max-w-md">
+    <form x-show="openSection" x-cloak method="POST" action="{{ $route('sections.store', ['courseId' => $course->id]) }}" class="mt-3 flex gap-2 max-w-md">
 
         @csrf
 
@@ -155,7 +155,7 @@
 
             @if($canManage)
 
-            <form x-show="editSection" x-cloak method="POST" action="{{ $route('sections.update', ['course' => $course, 'section' => $section]) }}" class="flex gap-2 flex-1">
+            <form x-show="editSection" x-cloak method="POST" action="{{ $route('sections.update', NestedCourseRoute::section($course, $section)) }}" class="flex gap-2 flex-1">
 
                 @csrf @method('PUT')
 
@@ -281,7 +281,9 @@
 
                 @endif
 
-                <a href="{{ $showUrlSection($course, $section, $lesson) }}" class="font-medium text-thinkra-navy hover:text-thinkra-purple truncate">
+                @php $lessonShowUrl = $showUrlSection($course, $section, $lesson); @endphp
+                <!-- lesson {{ $isTeacher ? 'edit' : 'show' }} url: {{ $lessonShowUrl }} -->
+                <a href="{{ $lessonShowUrl }}" class="font-medium text-thinkra-navy hover:text-thinkra-purple truncate">
 
                     {{ $lesson->title }}
 
@@ -411,7 +413,7 @@
 
                 @if($canManage)
 
-                <form x-show="editSub" x-cloak method="POST" action="{{ $route('sub-sections.update', ['course' => $course, 'section' => $section, 'subSection' => $subSection]) }}" class="flex gap-2 flex-1">
+                <form x-show="editSub" x-cloak method="POST" action="{{ $route('sub-sections.update', NestedCourseRoute::subSection($course, $section, $subSection)) }}" class="flex gap-2 flex-1">
 
                     @csrf @method('PUT')
 
@@ -525,7 +527,9 @@
 
                     @endif
 
-                    <a href="{{ $showUrlSub($course, $section, $subSection, $lesson) }}" class="font-medium text-thinkra-navy hover:text-thinkra-purple truncate">
+                    @php $lessonShowUrl = $showUrlSub($course, $section, $subSection, $lesson); @endphp
+                    <!-- lesson {{ $isTeacher ? 'edit' : 'show' }} url: {{ $lessonShowUrl }} -->
+                    <a href="{{ $lessonShowUrl }}" class="font-medium text-thinkra-navy hover:text-thinkra-purple truncate">
 
                         {{ $lesson->title }}
 

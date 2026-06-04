@@ -126,12 +126,12 @@ class NestedRouteBindingTest extends TestCase
         $data = $this->createCourseStructure();
 
         $this->actingAs($data['teacher'])
-            ->get(route('teacher.lessons.edit', [
+            ->get(route('teacher.lessons.edit', \App\Support\NestedCourseRoute::subSectionLesson(
                 $data['course'],
                 $data['section'],
                 $data['subSection'],
-                $data['lesson'],
-            ]))
+                $data['lesson']
+            )))
             ->assertOk();
     }
 
@@ -140,12 +140,12 @@ class NestedRouteBindingTest extends TestCase
         $data = $this->createCourseStructure();
 
         $this->actingAs($data['teacher'])
-            ->postJson(route('teacher.lessons.autosave', [
+            ->postJson(route('teacher.lessons.autosave', \App\Support\NestedCourseRoute::subSectionLesson(
                 $data['course'],
                 $data['section'],
                 $data['subSection'],
-                $data['lesson'],
-            ]), [
+                $data['lesson']
+            )), [
                 'title' => 'Lesson A updated',
                 'objective' => 'Goal',
                 'main_content' => '<p>Body</p>',
@@ -166,11 +166,11 @@ class NestedRouteBindingTest extends TestCase
         ]);
 
         $this->actingAs($data['teacher'])
-            ->get(route('teacher.section-lessons.edit', [
+            ->get(route('teacher.section-lessons.edit', \App\Support\NestedCourseRoute::sectionLesson(
                 $data['course'],
                 $data['section'],
-                $directLesson,
-            ]))
+                $directLesson
+            )))
             ->assertOk();
     }
 

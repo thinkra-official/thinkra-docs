@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\CourseMemberRole;
 use App\Models\Course;
 use App\Models\User;
+use App\Support\NestedCourseRoute;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -24,7 +25,7 @@ class CourseAccessTest extends TestCase
         ]);
 
         $this->actingAs($teacher)
-            ->get(route('teacher.courses.show', $course))
+            ->get(route('teacher.courses.show', ['courseId' => $course->id]))
             ->assertNotFound();
     }
 
@@ -42,7 +43,7 @@ class CourseAccessTest extends TestCase
         $course->members()->attach($teacher->id, ['role' => CourseMemberRole::Editor->value]);
 
         $this->actingAs($teacher)
-            ->get(route('teacher.courses.show', $course))
+            ->get(route('teacher.courses.show', ['courseId' => $course->id]))
             ->assertOk();
     }
 
@@ -60,23 +61,15 @@ class CourseAccessTest extends TestCase
             'sort_order' => 1,
         ]);
 
+        $lessonParams = NestedCourseRoute::subSectionLesson($course, $section, $sub, $lesson);
+
         $this->actingAs($teacher)
-            ->get(route('teacher.lessons.edit', [
-                'course' => $course,
-                'section' => $section,
-                'subSection' => $sub,
-                'lesson' => $lesson,
-            ]))
+            ->get(route('teacher.lessons.edit', $lessonParams))
             ->assertOk()
             ->assertSee('لديك صلاحية مشاهدة فقط', false);
 
         $this->actingAs($teacher)
-            ->put(route('teacher.lessons.update', [
-                'course' => $course,
-                'section' => $section,
-                'subSection' => $sub,
-                'lesson' => $lesson,
-            ]), [
+            ->put(route('teacher.lessons.update', $lessonParams), [
                 'title' => 'Hack',
                 'objective' => null,
                 'main_content' => null,

@@ -109,7 +109,7 @@ class StabilityTest extends TestCase
         $data = $this->createStructure(CourseMemberRole::Viewer);
 
         $this->actingAs($data['teacher'])
-            ->post(route('teacher.sections.store', $data['course']), ['title' => 'New'])
+            ->post(route('teacher.sections.store', ['courseId' => $data['course']->id]), ['title' => 'New'])
             ->assertForbidden();
     }
 
@@ -119,7 +119,7 @@ class StabilityTest extends TestCase
         $course = $data['course'];
 
         $this->actingAs($data['teacher'])
-            ->post(route('teacher.sections.store', $course), ['title' => 'S2'])
+            ->post(route('teacher.sections.store', ['courseId' => $course->id]), ['title' => 'S2'])
             ->assertRedirect()
             ->assertSessionHas('success');
 
