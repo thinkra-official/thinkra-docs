@@ -45,9 +45,9 @@
         </div>
         @endif
         </div>
-        <button type="button" class="docs-drawer-close" id="docs-drawer-close" aria-label="إغلاق القائمة">
+        <label for="docs-course-drawer-toggle" class="docs-drawer-close" role="button" aria-label="إغلاق القائمة">
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
+        </label>
     </div>
 
     <div class="course-sidebar-tree">

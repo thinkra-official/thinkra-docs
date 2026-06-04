@@ -111,10 +111,28 @@ html.docs-theme-dark {
     line-height: 1;
 }
 
+.docs-course-drawer-state {
+    position: fixed;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    overflow: hidden;
+    white-space: nowrap;
+    pointer-events: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
 .docs-drawer-toggle-btn {
     display: none;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    user-select: none;
 }
 
 .docs-topbar-course {
@@ -1072,20 +1090,18 @@ html.docs-theme-dark {
     }
 }
 
-/* Mobile drawer */
+/* Mobile drawer (CSS-only via checkbox — no JS required) */
 .docs-drawer-backdrop {
     position: fixed;
     inset: 0;
     background: rgba(15, 23, 42, 0.45);
     z-index: 64;
     opacity: 0;
-    transition: opacity 0.25s ease;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s;
     pointer-events: none;
-}
-
-.docs-drawer-backdrop.is-visible {
-    opacity: 1;
-    pointer-events: auto;
+    cursor: pointer;
+    margin: 0;
 }
 
 @media (max-width: 1023px) {
@@ -1095,10 +1111,16 @@ html.docs-theme-dark {
 
     .docs-drawer-toggle-btn {
         display: inline-flex !important;
+        position: relative;
+        z-index: 61;
     }
 
     .docs-topbar {
         z-index: 60;
+    }
+
+    .docs-drawer-backdrop {
+        display: block;
     }
 
     .docs-course-sidebar-panel {
@@ -1118,7 +1140,30 @@ html.docs-theme-dark {
         will-change: transform;
     }
 
-    .docs-course-sidebar-panel.is-open {
+    body:has(#docs-course-drawer-toggle:checked) .docs-drawer-backdrop {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    body:has(#docs-course-drawer-toggle:checked) .docs-course-sidebar-panel {
+        transform: translate3d(0, 0, 0);
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    body:has(#docs-course-drawer-toggle:checked),
+    body.docs-drawer-legacy-open {
+        overflow: hidden;
+    }
+
+    body.docs-drawer-legacy-open .docs-drawer-backdrop {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    body.docs-drawer-legacy-open .docs-course-sidebar-panel {
         transform: translate3d(0, 0, 0);
         visibility: visible;
         pointer-events: auto;

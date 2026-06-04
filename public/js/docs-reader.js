@@ -17,82 +17,29 @@
         updateScroll();
     }
 
-    /* Mobile drawer */
-    const drawerToggle = document.getElementById('docs-drawer-toggle');
-    const drawerClose = document.getElementById('docs-drawer-close');
-    const sidebarPanel = document.getElementById('docs-sidebar-panel');
-    const backdrop = document.getElementById('docs-drawer-backdrop');
-
-    function isMobileDrawer() {
-        return window.matchMedia('(max-width: 1023px)').matches;
-    }
-
-    function setDrawerOpen(open) {
-        if (!sidebarPanel || !isMobileDrawer()) return;
-        sidebarPanel.classList.toggle('is-open', open);
-        if (backdrop) {
-            if (open) {
-                backdrop.removeAttribute('hidden');
-                requestAnimationFrame(function () {
-                    backdrop.classList.add('is-visible');
-                });
-            } else {
-                backdrop.classList.remove('is-visible');
-                backdrop.setAttribute('hidden', '');
-            }
-        }
-        if (drawerToggle) {
-            drawerToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-        }
-        document.body.classList.toggle('docs-drawer-open', open);
-        document.body.style.overflow = open ? 'hidden' : '';
-    }
-
-    function toggleDrawer(e) {
-        if (e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        if (!sidebarPanel) return;
-        setDrawerOpen(!sidebarPanel.classList.contains('is-open'));
-    }
-
-    if (drawerToggle && sidebarPanel) {
-        drawerToggle.addEventListener('click', toggleDrawer);
-    }
-
-    if (drawerClose) {
-        drawerClose.addEventListener('click', function (e) {
-            e.preventDefault();
-            setDrawerOpen(false);
+    /* Mobile drawer: close when picking a lesson (checkbox drawer) */
+    const drawerCheckbox = document.getElementById('docs-course-drawer-toggle');
+    if (drawerCheckbox) {
+        document.querySelectorAll('.course-sidebar a').forEach(function (link) {
+            link.addEventListener('click', function () {
+                if (window.matchMedia('(max-width: 1023px)').matches) {
+                    drawerCheckbox.checked = false;
+                }
+            });
         });
-    }
 
-    if (backdrop) {
-        backdrop.addEventListener('click', function () {
-            setDrawerOpen(false);
-        });
-    }
-
-    document.querySelectorAll('.course-sidebar a').forEach(function (link) {
-        link.addEventListener('click', function () {
-            if (isMobileDrawer()) {
-                setDrawerOpen(false);
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && drawerCheckbox.checked) {
+                drawerCheckbox.checked = false;
             }
         });
-    });
 
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && sidebarPanel?.classList.contains('is-open')) {
-            setDrawerOpen(false);
-        }
-    });
-
-    window.addEventListener('resize', function () {
-        if (!isMobileDrawer()) {
-            setDrawerOpen(false);
-        }
-    });
+        window.addEventListener('resize', function () {
+            if (!window.matchMedia('(max-width: 1023px)').matches) {
+                drawerCheckbox.checked = false;
+            }
+        });
+    }
 
     /* Scroll active lesson into view in sidebar */
     const activeLesson = document.querySelector('.course-sidebar-lesson.is-active');
