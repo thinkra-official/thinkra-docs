@@ -85,4 +85,76 @@ class DocsReaderService
     {
         return Course::query()->where('slug', $slug)->first();
     }
+
+    /**
+     * @return array{section: \App\Models\Section, subSection: ?\App\Models\SubSection}
+     */
+    public function lessonPlacement(Lesson $lesson, Collection $sections): array
+    {
+        foreach ($sections as $section) {
+            foreach ($section->directLessons as $direct) {
+                if ($direct->id === $lesson->id) {
+                    return ['section' => $section, 'subSection' => null];
+                }
+            }
+
+            foreach ($section->subSections as $subSection) {
+                foreach ($subSection->lessons as $subLesson) {
+                    if ($subLesson->id === $lesson->id) {
+                        return ['section' => $section, 'subSection' => $subSection];
+                    }
+                }
+            }
+        }
+
+        return [
+            'section' => $lesson->resolveSection(),
+            'subSection' => $lesson->isInSubSection() ? $lesson->subSection : null,
+        ];
+    }
+
+    /**
+     * @return array{expandedSections: int[], expandedSubSections: int[]}
+     */
+    public function defaultExpandedState(Collection $sections, Lesson $currentLesson): array
+    {
+        $expandedSections = [];
+        $expandedSubSections = [];
+
+        foreach ($sections as $section) {
+            $sectionHasCurrent = false;
+
+            foreach ($section->directLessons as $direct) {
+                if ($direct->id === $currentLesson->id) {
+                    $sectionHasCurrent = true;
+                }
+            }
+
+            foreach ($section->subSections as $subSection) {
+                $subHasCurrent = false;
+                foreach ($subSection->lessons as $subLesson) {
+                    if ($subLesson->id === $currentLesson->id) {
+                        $subHasCurrent = true;
+                        $sectionHasCurrent = true;
+                    }
+                }
+                if ($subHasCurrent) {
+                    $expandedSubSections[] = $subSection->id;
+                }
+            }
+
+            if ($sectionHasCurrent) {
+                $expandedSections[] = $section->id;
+            }
+        }
+
+        if ($expandedSections === [] && $sections->isNotEmpty()) {
+            $expandedSections[] = $sections->first()->id;
+        }
+
+        return [
+            'expandedSections' => $expandedSections,
+            'expandedSubSections' => $expandedSubSections,
+        ];
+    }
 }

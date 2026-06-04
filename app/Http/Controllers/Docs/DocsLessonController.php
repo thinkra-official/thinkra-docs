@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Docs;
 
 use App\Http\Controllers\Controller;
 use App\Services\Docs\DocsAccessService;
+use App\Services\Docs\DocsLessonProgressService;
 use App\Services\Docs\DocsReaderService;
 use App\Services\Docs\DocsTocParser;
 use Illuminate\Http\RedirectResponse;
@@ -15,7 +16,8 @@ class DocsLessonController extends Controller
     public function __construct(
         protected DocsReaderService $reader,
         protected DocsAccessService $access,
-        protected DocsTocParser $toc
+        protected DocsTocParser $toc,
+        protected DocsLessonProgressService $progress
     ) {}
 
     public function show(Request $request, string $courseSlug, string $lessonSlug, bool $preview = false): View|RedirectResponse
@@ -56,18 +58,36 @@ class DocsLessonController extends Controller
 
         $metaDescription = \Illuminate\Support\Str::limit(strip_tags($lesson->objective ?: $lesson->main_content ?? ''), 160);
         $enableSeo = $course->isPublic() && ! $preview;
+        $placement = $this->reader->lessonPlacement($lesson, $structure['sections']);
+        $progressStats = $this->progress->statsForUser($user, $structure['flatLessons']);
+        $expanded = $this->reader->defaultExpandedState($structure['sections'], $lesson);
+        $readingMinutes = $this->progress->estimateReadingMinutes(
+            $lesson->main_content,
+            $lesson->objective
+        );
+        $lessonComplete = $this->progress->isComplete($user, $lesson, $progressStats['completedIds']);
 
         return view('docs.lesson', [
             'course' => $course,
             'lesson' => $lesson,
             'currentLesson' => $lesson,
+            'lessonSection' => $placement['section'],
+            'lessonSubSection' => $placement['subSection'],
             'sections' => $structure['sections'],
+            'flatLessons' => $structure['flatLessons'],
             'previousLesson' => $adjacent['previous'],
             'nextLesson' => $adjacent['next'],
             'contentHtml' => $contentHtml,
             'toc' => $toc,
             'preview' => $preview,
             'showTeacherNotes' => $showNotes && filled($lesson->teacher_notes),
+            'progressStats' => $progressStats,
+            'expandedSections' => $expanded['expandedSections'],
+            'expandedSubSections' => $expanded['expandedSubSections'],
+            'readingMinutes' => $readingMinutes,
+            'lessonComplete' => $lessonComplete,
+            'canTrackProgress' => $user !== null && ! $preview,
+            'completeUrl' => route('docs.lesson.complete', [$course->slug, $lesson->slug]),
             'seo' => $enableSeo,
             'metaDescription' => $metaDescription,
             'canonicalUrl' => $lessonRoute,

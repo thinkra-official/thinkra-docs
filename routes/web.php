@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Docs\DocsCourseController;
 use App\Http\Controllers\Docs\DocsLessonController;
+use App\Http\Controllers\Docs\DocsLessonProgressController;
 use App\Http\Controllers\Docs\DocsSearchController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\CourseDocsController;
@@ -36,6 +37,9 @@ Route::prefix('docs')->name('docs.')->group(function () {
 
     Route::get('/{courseSlug}', [DocsCourseController::class, 'show'])->name('course');
     Route::get('/{courseSlug}/{lessonSlug}', [DocsLessonController::class, 'show'])->name('lesson');
+    Route::post('/{courseSlug}/{lessonSlug}/complete', [DocsLessonProgressController::class, 'complete'])
+        ->middleware('auth')
+        ->name('lesson.complete');
 });
 
 Route::get('/share/{token}', [ShareLinkController::class, 'show'])->name('share.show');
