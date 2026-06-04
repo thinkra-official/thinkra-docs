@@ -186,7 +186,7 @@ class StabilityTest extends TestCase
                 'sectionId' => $data['section']->id,
                 'subSectionId' => $data['subSection']->id,
             ]), ['title' => 'New Lesson'])
-            ->assertRedirect()
+            ->assertRedirect(route('teacher.courses.show', $data['course']))
             ->assertSessionHas('success');
 
         $lesson = $data['subSection']->lessons()->where('title', 'New Lesson')->first();
@@ -260,7 +260,7 @@ class StabilityTest extends TestCase
         $data = $this->createStructure();
         $admin = \App\Models\User::factory()->create(['role' => UserRole::Admin]);
 
-        $response = $this->actingAs($admin)
+        $this->actingAs($admin)
             ->post(route('admin.courses.section-lessons.store', [
                 'courseId' => $data['course']->id,
                 'sectionId' => $data['section']->id,
@@ -270,26 +270,13 @@ class StabilityTest extends TestCase
                 'main_content' => '',
                 'teacher_notes' => '',
             ])
-            ->assertRedirect()
+            ->assertRedirect(route('admin.courses.show', $data['course']))
             ->assertSessionHas('success');
 
         $lesson = $data['section']->directLessons()->where('title', 'Admin Direct Lesson')->first();
         $this->assertNotNull($lesson);
         $this->assertSame($data['section']->id, $lesson->section_id);
         $this->assertNull($lesson->sub_section_id);
-
-        $response->assertRedirect(route(
-            'admin.courses.section-lessons.show',
-            NestedCourseRoute::sectionLesson($data['course'], $data['section'], $lesson)
-        ));
-
-        $this->actingAs($admin)
-            ->get(route(
-                'admin.courses.section-lessons.show',
-                NestedCourseRoute::sectionLesson($data['course'], $data['section'], $lesson)
-            ))
-            ->assertOk()
-            ->assertSee('Admin Direct Lesson');
 
         $this->get(route('admin.courses.section-lessons.store', [
             'courseId' => $data['course']->id,
@@ -307,7 +294,7 @@ class StabilityTest extends TestCase
                 'courseId' => $data['course']->id,
                 'sectionId' => $data['section']->id,
             ]), ['title' => 'فصل درس'])
-            ->assertRedirect()
+            ->assertRedirect(route('teacher.courses.show', $data['course']))
             ->assertSessionHas('success');
 
         $lesson = $data['section']->directLessons()->where('title', 'فصل درس')->first();

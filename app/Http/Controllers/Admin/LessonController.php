@@ -28,7 +28,6 @@ use App\Support\NestedCourseRoute;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 
@@ -67,19 +66,12 @@ class LessonController extends Controller
         int|string $sectionId,
         int|string $subSectionId
     ): RedirectResponse {
-        Log::info('Admin LessonController@store hit', [
-            'courseId' => $courseId,
-            'sectionId' => $sectionId,
-            'subSectionId' => $subSectionId,
-            'title' => $request->input('title'),
-        ]);
-
         [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
         $subSection = $this->resolveSubSectionInSection($section, $subSectionId);
 
         $maxOrder = $subSection->lessons()->max('sort_order') ?? 0;
 
-        $lesson = $subSection->lessons()->create([
+        $subSection->lessons()->create([
             ...$request->validated(),
             'section_id' => null,
             'sub_section_id' => $subSection->id,
@@ -87,10 +79,8 @@ class LessonController extends Controller
             'sort_order' => $maxOrder + 1,
         ]);
 
-        $lesson->refresh();
-
         return redirect()
-            ->route('admin.courses.lessons.show', NestedCourseRoute::subSectionLesson($course, $section, $subSection, $lesson))
+            ->route('admin.courses.show', $course)
             ->with('success', 'تم إنشاء الدرس.');
     }
 

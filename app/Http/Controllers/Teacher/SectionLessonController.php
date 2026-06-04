@@ -32,7 +32,6 @@ use App\Support\NestedCourseRoute;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 
@@ -73,12 +72,6 @@ class SectionLessonController extends Controller
 
     public function store(StoreLessonRequest $request, int|string $courseId, int|string $sectionId): RedirectResponse
     {
-        Log::info('Teacher SectionLessonController@store hit', [
-            'courseId' => $courseId,
-            'sectionId' => $sectionId,
-            'title' => $request->input('title'),
-        ]);
-
         [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
 
         $this->ensureCourseAccess($course);
@@ -86,7 +79,7 @@ class SectionLessonController extends Controller
 
         $maxOrder = $section->directLessons()->max('sort_order') ?? 0;
 
-        $lesson = $section->directLessons()->create([
+        $section->directLessons()->create([
             ...$request->validated(),
             'section_id' => $section->id,
             'sub_section_id' => null,
@@ -94,18 +87,8 @@ class SectionLessonController extends Controller
             'sort_order' => $maxOrder + 1,
         ]);
 
-        $lesson->refresh();
-
-        $routeParams = NestedCourseRoute::sectionLesson($course, $section, $lesson);
-
-        if (! $lesson->isDirectInSection()) {
-            return redirect()
-                ->route('teacher.courses.show', $course)
-                ->with('success', 'تم إنشاء الدرس.');
-        }
-
         return redirect()
-            ->route('teacher.section-lessons.edit', $routeParams)
+            ->route('teacher.courses.show', $course)
             ->with('success', 'تم إنشاء الدرس.');
     }
 

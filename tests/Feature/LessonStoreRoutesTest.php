@@ -42,7 +42,7 @@ class LessonStoreRoutesTest extends TestCase
                 'main_content' => '',
                 'teacher_notes' => '',
             ])
-            ->assertRedirect()
+            ->assertRedirect(route('admin.courses.show', $data['course']))
             ->assertSessionHas('success')
             ->assertSessionHasNoErrors();
 
@@ -61,7 +61,7 @@ class LessonStoreRoutesTest extends TestCase
                 'courseId' => $data['course']->id,
                 'sectionId' => $data['section']->id,
             ]), ['title' => 'Teacher Direct Lesson'])
-            ->assertRedirect()
+            ->assertRedirect(route('teacher.courses.show', $data['course']))
             ->assertSessionHas('success');
 
         $this->assertNotNull(
@@ -80,7 +80,7 @@ class LessonStoreRoutesTest extends TestCase
                 'sectionId' => $data['section']->id,
                 'subSectionId' => $data['subSection']->id,
             ]), ['title' => 'Admin Sub Lesson'])
-            ->assertRedirect()
+            ->assertRedirect(route('admin.courses.show', $data['course']))
             ->assertSessionHas('success');
 
         $lesson = $data['subSection']->lessons()->where('title', 'Admin Sub Lesson')->first();
@@ -99,7 +99,7 @@ class LessonStoreRoutesTest extends TestCase
                 'sectionId' => $data['section']->id,
                 'subSectionId' => $data['subSection']->id,
             ]), ['title' => 'Teacher Sub Lesson'])
-            ->assertRedirect()
+            ->assertRedirect(route('teacher.courses.show', $data['course']))
             ->assertSessionHas('success');
 
         $this->assertNotNull(
