@@ -111,12 +111,16 @@ class Lesson extends Model
 
     public function isDirectInSection(): bool
     {
-        return $this->section_id !== null && $this->sub_section_id === null;
+        return $this->section_id !== null
+            && $this->section_id !== 0
+            && ($this->sub_section_id === null || $this->sub_section_id === 0);
     }
 
     public function isInSubSection(): bool
     {
-        return $this->sub_section_id !== null && $this->section_id === null;
+        return $this->sub_section_id !== null
+            && $this->sub_section_id !== 0
+            && ($this->section_id === null || $this->section_id === 0);
     }
 
     public function isPublished(): bool

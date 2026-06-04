@@ -29,12 +29,12 @@ class SubSection extends Model
             ->orderBy('sort_order');
     }
 
-    public function resolveChildRouteBinding($childType, $value, $field = null)
+    public function resolveChildRouteBinding($childType, $value, $field = null): ?Model
     {
         if ($childType === 'lesson') {
-            $field = $field ?: 'id';
-
-            return $this->lessons()->where($field, $value)->first();
+            return $this->lessons()
+                ->where($field ?: 'id', $value)
+                ->first();
         }
 
         return parent::resolveChildRouteBinding($childType, $value, $field);

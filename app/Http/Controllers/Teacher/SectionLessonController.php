@@ -98,11 +98,17 @@ class SectionLessonController extends Controller
 
         $lesson->refresh();
 
+        $routeParams = NestedCourseRoute::sectionLesson($course, $section, $lesson);
+
+        if (! $lesson->isDirectInSection()) {
+            return redirect()
+                ->route('teacher.courses.show', $course)
+                ->with('success', 'تم إنشاء الدرس.');
+        }
+
         return redirect()
-            ->route('teacher.section-lessons.edit', NestedCourseRoute::sectionLesson($course, $section, $lesson))
-
+            ->route('teacher.section-lessons.edit', $routeParams)
             ->with('success', 'تم إنشاء الدرس.');
-
     }
 
 

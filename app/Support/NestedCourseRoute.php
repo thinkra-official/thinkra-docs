@@ -13,8 +13,8 @@ final class NestedCourseRoute
     public static function section(Course $course, Section $section): array
     {
         return [
-            'course' => $course,
-            'section' => $section,
+            'course' => $course->getRouteKey(),
+            'section' => $section->getRouteKey(),
         ];
     }
 
