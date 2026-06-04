@@ -149,8 +149,18 @@ composer install --no-dev --optimize-autoloader
 php artisan migrate --force
 php artisan config:cache
 php artisan route:cache
+php artisan view:clear
+php artisan optimize:clear
 php artisan view:cache
 ```
+
+بعد تحديث واجهة القارئ (CSS/JS) إذا ظهرت نسخة قديمة على iPhone:
+
+1. تأكد أن `git pull` نجح وأن ملفات `public/css/docs-reader.css` و`public/js/docs-reader.js` محدّثة.
+2. نفّذ `php artisan view:clear` (القوالب تُخزَّن مؤقتاً).
+3. اختياري: في `.env` ضع `APP_ASSET_VERSION=20260604` (أي رقم/تاريخ جديد) ثم `php artisan config:cache` لإجبار كل المتصفحات على تحميل الأصول من جديد.
+4. على iPhone: Safari → مسح ذاكرة التخزين المؤقت، أو أغلق التبويب وافتح الرابط من جديد (ليس من سجل «الأخيرة» فقط).
+5. في Network على الجوال تحقق أن `docs-reader.css` يحتوي `?v=` برقم حديث.
 
 عند تغيير `.env` فقط:
 

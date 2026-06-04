@@ -220,6 +220,6 @@ window.ThinkraLessonEditor = {
     intervalMs: 10000,
 };
 </script>
-<script src="{{ asset('js/lesson-editor.js') }}"></script>
+<script src="{{ asset_version('js/lesson-editor.js') }}"></script>
 @endpush
 @endsection

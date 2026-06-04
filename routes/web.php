@@ -89,8 +89,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('courses', AdminCourseController::class);
         Route::get('courses/{course}/docs-settings', [CourseDocsController::class, 'edit'])->name('courses.docs.edit');
         Route::put('courses/{course}/docs-settings', [CourseDocsController::class, 'update'])->name('courses.docs.update');
-        Route::post('courses/{course}/share-links', [CourseDocsController::class, 'storeShareLink'])->name('courses.share-links.store');
-        Route::delete('courses/{course}/share-links/{shareLink}', [CourseDocsController::class, 'destroyShareLink'])->name('courses.share-links.destroy');
+        Route::post('courses/{courseId}/share-links', [CourseDocsController::class, 'storeShareLink'])->name('courses.share-links.store');
+        Route::delete('courses/{courseId}/share-links/{shareLinkId}', [CourseDocsController::class, 'destroyShareLink'])->name('courses.share-links.destroy');
         Route::get('courses/{course}/members', [CourseMemberController::class, 'edit'])
             ->name('courses.members.edit');
         Route::put('courses/{course}/members', [CourseMemberController::class, 'update'])

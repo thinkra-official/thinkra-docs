@@ -47,7 +47,7 @@
 
     <div class="thinkra-card p-6">
         <h2 class="font-semibold text-thinkra-navy mb-4">روابط المشاركة</h2>
-        <form method="POST" action="{{ route('admin.courses.share-links.store', $course) }}" class="flex flex-wrap gap-2 mb-6">
+        <form method="POST" action="{{ route('admin.courses.share-links.store', ['courseId' => $course->id]) }}" class="flex flex-wrap gap-2 mb-6">
             @csrf
             <select name="expires" class="rounded-xl border text-sm py-2 px-3 flex-1 min-w-[140px]">
                 <option value="1">يوم واحد</option>
@@ -69,8 +69,9 @@
                     {{ $link->expires_at ? 'ينتهي: '.$link->expires_at->format('Y-m-d H:i') : 'بدون انتهاء' }}
                     — {{ $link->isValid() ? 'صالح' : 'منتهي' }}
                 </p>
-                <form method="POST" action="{{ route('admin.courses.share-links.destroy', [$course, $link]) }}" class="mt-2">
-                    @csrf @method('DELETE')
+                <form method="POST" action="{{ route('admin.courses.share-links.destroy', ['courseId' => $course->id, 'shareLinkId' => $link->id]) }}" class="mt-2">
+                    @csrf
+                    @method('DELETE')
                     <button type="submit" class="text-red-600 text-xs hover:underline">حذف</button>
                 </form>
             </li>

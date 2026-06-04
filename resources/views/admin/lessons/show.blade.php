@@ -3,7 +3,7 @@
 @section('title', $lesson->title)
 
 @push('head')
-<link rel="stylesheet" href="{{ asset('css/lesson-content.css') }}">
+<link rel="stylesheet" href="{{ asset_version('css/lesson-content.css') }}">
 @endpush
 
 @php

@@ -3,6 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Thinkra Docs')</title>
     @if(!empty($seo) && $seo)
@@ -19,9 +22,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{{ asset('css/application-logo.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/docs-reader.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/lesson-content.css') }}">
+    <link rel="stylesheet" href="{{ asset_version('css/application-logo.css') }}">
+    <link rel="stylesheet" href="{{ asset_version('css/docs-reader.css') }}">
+    <link rel="stylesheet" href="{{ asset_version('css/lesson-content.css') }}">
     @stack('head')
 </head>
 <body class="docs-shell">
@@ -118,7 +121,7 @@
     </script>
     @endisset
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
-    <script src="{{ asset('js/docs-reader.js') }}" defer></script>
+    <script src="{{ asset_version('js/docs-reader.js') }}" defer></script>
     @stack('scripts')
 </body>
 </html>

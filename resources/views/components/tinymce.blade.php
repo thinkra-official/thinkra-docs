@@ -31,7 +31,7 @@
 
 @once
     @push('head')
-    <link rel="stylesheet" href="{{ asset('css/lesson-content.css') }}">
+    <link rel="stylesheet" href="{{ asset_version('css/lesson-content.css') }}">
     @endpush
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/tinymce@7.6.1/tinymce.min.js"></script>

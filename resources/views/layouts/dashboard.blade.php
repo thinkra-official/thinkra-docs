@@ -53,5 +53,5 @@
 @endsection
 
 @push('head')
-<link rel="stylesheet" href="{{ asset('css/thinkra-dashboard.css') }}">
+<link rel="stylesheet" href="{{ asset_version('css/thinkra-dashboard.css') }}">
 @endpush

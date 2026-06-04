@@ -9,6 +9,7 @@ use App\Models\Course;
 use App\Models\CourseShareLink;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class CourseDocsController extends Controller
@@ -29,8 +30,10 @@ class CourseDocsController extends Controller
             ->with('success', 'تم حفظ إعدادات النشر.');
     }
 
-    public function storeShareLink(Request $request, Course $course): RedirectResponse
+    public function storeShareLink(Request $request, int|string $courseId): RedirectResponse
     {
+        $course = Course::findOrFail($courseId);
+
         $request->validate([
             'expires' => ['required', 'in:1,7,30,never'],
         ]);
@@ -53,11 +56,19 @@ class CourseDocsController extends Controller
             ->with('share_url', route('share.show', $link->token));
     }
 
-    public function destroyShareLink(Course $course, CourseShareLink $shareLink): RedirectResponse
+    public function destroyShareLink(int|string $courseId, int|string $shareLinkId): RedirectResponse
     {
-        if ($shareLink->course_id !== $course->id) {
-            abort(404);
-        }
+        Log::info('Admin CourseShareLinkController@destroy hit', [
+            'courseId' => $courseId,
+            'shareLinkId' => $shareLinkId,
+        ]);
+
+        $course = Course::findOrFail($courseId);
+
+        $shareLink = CourseShareLink::query()
+            ->whereKey($shareLinkId)
+            ->where('course_id', $course->id)
+            ->firstOrFail();
 
         $shareLink->delete();
 
