@@ -76,7 +76,7 @@ class CourseStructureNestedRoutesTest extends TestCase
         );
     }
 
-    public function test_admin_direct_lesson_show_with_raw_ids(): void
+    public function test_admin_direct_lesson_show_redirects_to_edit(): void
     {
         $d = $this->structure();
 
@@ -86,23 +86,58 @@ class CourseStructureNestedRoutesTest extends TestCase
                 $d['section'],
                 $d['directLesson']
             )))
-            ->assertOk()
-            ->assertSee($d['directLesson']->title);
+            ->assertRedirect(route('admin.courses.section-lessons.edit', NestedCourseRoute::sectionLesson(
+                $d['course'],
+                $d['section'],
+                $d['directLesson']
+            )));
     }
 
-    public function test_admin_sub_section_lesson_show_with_raw_ids(): void
+    public function test_admin_sub_section_lesson_edit_with_editor(): void
     {
         $d = $this->structure();
 
         $this->actingAs($d['admin'])
-            ->get(route('admin.courses.lessons.show', NestedCourseRoute::subSectionLesson(
+            ->get(route('admin.courses.lessons.edit', NestedCourseRoute::subSectionLesson(
                 $d['course'],
                 $d['section'],
                 $d['subSection'],
                 $d['subLesson']
             )))
             ->assertOk()
-            ->assertSee($d['subLesson']->title);
+            ->assertSee($d['subLesson']->title)
+            ->assertSee('main_content', false)
+            ->assertSee('حفظ الآن');
+    }
+
+    public function test_admin_direct_lesson_edit_update_autosave(): void
+    {
+        $d = $this->structure();
+        $params = NestedCourseRoute::sectionLesson($d['course'], $d['section'], $d['directLesson']);
+
+        $this->actingAs($d['admin'])
+            ->get(route('admin.courses.section-lessons.edit', $params))
+            ->assertOk()
+            ->assertSee('id="lesson-form"', false);
+
+        $this->actingAs($d['admin'])
+            ->put(route('admin.courses.section-lessons.update', $params), [
+                'title' => 'Direct Admin',
+                'objective' => 'هدف',
+                'main_content' => '<p>محتوى</p>',
+                'teacher_notes' => null,
+            ])
+            ->assertRedirect();
+
+        $this->actingAs($d['admin'])
+            ->postJson(route('admin.courses.section-lessons.autosave', $params), [
+                'title' => 'Direct Admin',
+                'objective' => 'هدف',
+                'main_content' => '<p>autosave</p>',
+                'teacher_notes' => null,
+            ])
+            ->assertOk()
+            ->assertJson(['ok' => true]);
     }
 
     public function test_teacher_direct_lesson_edit_update_status_autosave_version(): void

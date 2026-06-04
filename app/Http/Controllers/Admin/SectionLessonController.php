@@ -8,9 +8,12 @@ use App\Http\Controllers\Concerns\ResolvesCourseStructureFromRouteIds;
 use App\Http\Controllers\Concerns\ResolvesLessonPlacement;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLessonRequest;
+use App\Http\Requests\Teacher\UpdateLessonRequest;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Section;
+use App\Services\LessonContentService;
+use App\Support\NestedCourseRoute;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -22,7 +25,11 @@ class SectionLessonController extends Controller
     use ResolvesCourseStructureFromRouteIds;
     use ResolvesLessonPlacement;
 
-    public function show(int|string $courseId, int|string $sectionId, int|string $lessonId): View
+    public function __construct(
+        protected LessonContentService $content
+    ) {}
+
+    public function show(int|string $courseId, int|string $sectionId, int|string $lessonId): RedirectResponse
     {
         Log::info('Admin SectionLessonController@show hit', [
             'courseId' => $courseId,
@@ -31,14 +38,77 @@ class SectionLessonController extends Controller
         ]);
 
         [$course, $section, $lesson] = $this->resolveDirectSectionLesson($courseId, $sectionId, $lessonId);
+
+        return redirect()->route('admin.courses.section-lessons.edit', NestedCourseRoute::sectionLesson(
+            $course,
+            $section,
+            $lesson
+        ));
+    }
+
+    public function edit(int|string $courseId, int|string $sectionId, int|string $lessonId): View
+    {
+        Log::info('Admin SectionLessonController@edit hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'lessonId' => $lessonId,
+        ]);
+
+        [$course, $section, $lesson] = $this->resolveDirectSectionLesson($courseId, $sectionId, $lessonId);
         $this->assertLessonBelongsToSection($lesson, $section);
 
-        return view('admin.lessons.show', [
+        return view('admin.lessons.edit', $this->lessonEditorData($course, $section, null, $lesson));
+    }
+
+    public function update(UpdateLessonRequest $request, int|string $courseId, int|string $sectionId, int|string $lessonId): RedirectResponse
+    {
+        Log::info('Admin SectionLessonController@update hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'lessonId' => $lessonId,
+        ]);
+
+        [$course, $section, $lesson] = $this->resolveDirectSectionLesson($courseId, $sectionId, $lessonId);
+        $this->assertLessonBelongsToSection($lesson, $section);
+
+        $this->content->save($lesson, auth()->user(), $request->validated(), forceVersion: true);
+
+        return back()->with('success', 'تم حفظ محتوى الدرس.');
+    }
+
+    public function updateStatus(Request $request, int|string $courseId, int|string $sectionId, int|string $lessonId): RedirectResponse
+    {
+        Log::info('Admin SectionLessonController@updateStatus hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'lessonId' => $lessonId,
+        ]);
+
+        [$course, $section, $lesson] = $this->resolveDirectSectionLesson($courseId, $sectionId, $lessonId);
+        $this->assertLessonBelongsToSection($lesson, $section);
+
+        $validated = $request->validate([
+            'status' => ['required', 'in:DRAFT,NEEDS_REVIEW,READY,PUBLISHED'],
+        ]);
+
+        $lesson->update(['status' => $validated['status']]);
+
+        return back()->with('success', 'تم تحديث حالة الدرس.');
+    }
+
+    /** @return array<string, mixed> */
+    protected function lessonEditorData(Course $course, Section $section, ?\App\Models\SubSection $subSection, Lesson $lesson): array
+    {
+        return [
             'course' => $course,
             'section' => $section,
-            'subSection' => null,
+            'subSection' => $subSection,
             'lesson' => $lesson,
-        ]);
+            'canEdit' => true,
+            'versions' => $lesson->versions()->with('author:id,name')->limit(30)->get(),
+            'changeLogs' => $lesson->changeLogs()->with('user:id,name')->limit(20)->get(),
+            'inSubSection' => $subSection !== null,
+        ];
     }
 
     public function store(StoreLessonRequest $request, int|string $courseId, int|string $sectionId): RedirectResponse

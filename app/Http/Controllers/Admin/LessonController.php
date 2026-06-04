@@ -15,6 +15,7 @@ use App\Http\Controllers\Concerns\ResolvesLessonPlacement;
 use App\Http\Controllers\Controller;
 
 use App\Http\Requests\StoreLessonRequest;
+use App\Http\Requests\Teacher\UpdateLessonRequest;
 
 use App\Models\Course;
 
@@ -24,6 +25,7 @@ use App\Models\Section;
 
 use App\Models\SubSection;
 
+use App\Services\LessonContentService;
 use App\Support\NestedCourseRoute;
 
 use Illuminate\Http\RedirectResponse;
@@ -41,15 +43,45 @@ class LessonController extends Controller
     use ResolvesCourseStructureFromRouteIds;
     use ResolvesLessonPlacement;
 
-
+    public function __construct(
+        protected LessonContentService $content
+    ) {}
 
     public function show(
         int|string $courseId,
         int|string $sectionId,
         int|string $subSectionId,
         int|string $lessonId
-    ): View {
+    ): RedirectResponse {
         Log::info('Admin LessonController@show hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'subSectionId' => $subSectionId,
+            'lessonId' => $lessonId,
+        ]);
+
+        [$course, $section, $subSection, $lesson] = $this->resolveSubSectionLesson(
+            $courseId,
+            $sectionId,
+            $subSectionId,
+            $lessonId
+        );
+
+        return redirect()->route('admin.courses.lessons.edit', NestedCourseRoute::subSectionLesson(
+            $course,
+            $section,
+            $subSection,
+            $lesson
+        ));
+    }
+
+    public function edit(
+        int|string $courseId,
+        int|string $sectionId,
+        int|string $subSectionId,
+        int|string $lessonId
+    ): View {
+        Log::info('Admin LessonController@edit hit', [
             'courseId' => $courseId,
             'sectionId' => $sectionId,
             'subSectionId' => $subSectionId,
@@ -65,7 +97,82 @@ class LessonController extends Controller
 
         $this->assertLessonBelongsToSubSection($lesson, $subSection);
 
-        return view('admin.lessons.show', compact('course', 'section', 'subSection', 'lesson'));
+        return view('admin.lessons.edit', $this->lessonEditorData($course, $section, $subSection, $lesson));
+    }
+
+    public function update(
+        UpdateLessonRequest $request,
+        int|string $courseId,
+        int|string $sectionId,
+        int|string $subSectionId,
+        int|string $lessonId
+    ): RedirectResponse {
+        Log::info('Admin LessonController@update hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'subSectionId' => $subSectionId,
+            'lessonId' => $lessonId,
+        ]);
+
+        [$course, $section, $subSection, $lesson] = $this->resolveSubSectionLesson(
+            $courseId,
+            $sectionId,
+            $subSectionId,
+            $lessonId
+        );
+
+        $this->assertLessonBelongsToSubSection($lesson, $subSection);
+
+        $this->content->save($lesson, auth()->user(), $request->validated(), forceVersion: true);
+
+        return back()->with('success', 'تم حفظ محتوى الدرس.');
+    }
+
+    public function updateStatus(
+        Request $request,
+        int|string $courseId,
+        int|string $sectionId,
+        int|string $subSectionId,
+        int|string $lessonId
+    ): RedirectResponse {
+        Log::info('Admin LessonController@updateStatus hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'subSectionId' => $subSectionId,
+            'lessonId' => $lessonId,
+        ]);
+
+        [$course, $section, $subSection, $lesson] = $this->resolveSubSectionLesson(
+            $courseId,
+            $sectionId,
+            $subSectionId,
+            $lessonId
+        );
+
+        $this->assertLessonBelongsToSubSection($lesson, $subSection);
+
+        $validated = $request->validate([
+            'status' => ['required', 'in:DRAFT,NEEDS_REVIEW,READY,PUBLISHED'],
+        ]);
+
+        $lesson->update(['status' => $validated['status']]);
+
+        return back()->with('success', 'تم تحديث حالة الدرس.');
+    }
+
+    /** @return array<string, mixed> */
+    protected function lessonEditorData(Course $course, Section $section, SubSection $subSection, Lesson $lesson): array
+    {
+        return [
+            'course' => $course,
+            'section' => $section,
+            'subSection' => $subSection,
+            'lesson' => $lesson,
+            'canEdit' => true,
+            'versions' => $lesson->versions()->with('author:id,name')->limit(30)->get(),
+            'changeLogs' => $lesson->changeLogs()->with('user:id,name')->limit(20)->get(),
+            'inSubSection' => true,
+        ];
     }
 
 

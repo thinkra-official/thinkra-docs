@@ -22,13 +22,13 @@
 
         ? fn ($course, $section, $lesson) => route('teacher.section-lessons.edit', NestedCourseRoute::sectionLesson($course, $section, $lesson))
 
-        : fn ($course, $section, $lesson) => route('admin.courses.section-lessons.show', NestedCourseRoute::sectionLesson($course, $section, $lesson));
+        : fn ($course, $section, $lesson) => route('admin.courses.section-lessons.edit', NestedCourseRoute::sectionLesson($course, $section, $lesson));
 
     $showUrlSub = $isTeacher
 
         ? fn ($course, $section, $sub, $lesson) => route('teacher.lessons.edit', NestedCourseRoute::subSectionLesson($course, $section, $sub, $lesson))
 
-        : fn ($course, $section, $sub, $lesson) => route('admin.courses.lessons.show', NestedCourseRoute::subSectionLesson($course, $section, $sub, $lesson));
+        : fn ($course, $section, $sub, $lesson) => route('admin.courses.lessons.edit', NestedCourseRoute::subSectionLesson($course, $section, $sub, $lesson));
 
     $canReorder = $canManage || $canEditContent;
 

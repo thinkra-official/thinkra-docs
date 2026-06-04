@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Admin\CourseStructureReorderController as AdminCourseStructureReorderController;
 use App\Http\Controllers\Admin\CourseMemberController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\LessonContentController as AdminLessonContentController;
 use App\Http\Controllers\Admin\LessonController as AdminLessonController;
 use App\Http\Controllers\Admin\SectionController as AdminSectionController;
 use App\Http\Controllers\Admin\SubSectionController as AdminSubSectionController;
@@ -102,6 +103,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->name('courses.section-lessons.store');
         Route::get('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}', [AdminSectionLessonController::class, 'show'])
             ->name('courses.section-lessons.show');
+        Route::get('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}/edit', [AdminSectionLessonController::class, 'edit'])
+            ->name('courses.section-lessons.edit');
+        Route::put('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}', [AdminSectionLessonController::class, 'update'])
+            ->name('courses.section-lessons.update');
+        Route::patch('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}/status', [AdminSectionLessonController::class, 'updateStatus'])
+            ->name('courses.section-lessons.status');
+        Route::post('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}/autosave', [AdminLessonContentController::class, 'autosaveSection'])
+            ->name('courses.section-lessons.autosave');
+        Route::get('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}/versions/{versionId}', [AdminLessonContentController::class, 'showVersionSection'])
+            ->name('courses.section-lessons.versions.show');
+        Route::post('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}/versions/{versionId}/restore', [AdminLessonContentController::class, 'restoreSection'])
+            ->name('courses.section-lessons.versions.restore');
         Route::delete('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}', [AdminSectionLessonController::class, 'destroy'])
             ->name('courses.section-lessons.destroy');
         Route::patch('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}/move', [AdminSectionLessonController::class, 'move'])
@@ -118,6 +131,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->name('courses.lessons.store');
         Route::get('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons/{lessonId}', [AdminLessonController::class, 'show'])
             ->name('courses.lessons.show');
+        Route::get('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons/{lessonId}/edit', [AdminLessonController::class, 'edit'])
+            ->name('courses.lessons.edit');
+        Route::put('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons/{lessonId}', [AdminLessonController::class, 'update'])
+            ->name('courses.lessons.update');
+        Route::patch('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons/{lessonId}/status', [AdminLessonController::class, 'updateStatus'])
+            ->name('courses.lessons.status');
+        Route::post('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons/{lessonId}/autosave', [AdminLessonContentController::class, 'autosave'])
+            ->name('courses.lessons.autosave');
+        Route::get('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons/{lessonId}/versions/{versionId}', [AdminLessonContentController::class, 'showVersion'])
+            ->name('courses.lessons.versions.show');
+        Route::post('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons/{lessonId}/versions/{versionId}/restore', [AdminLessonContentController::class, 'restore'])
+            ->name('courses.lessons.versions.restore');
         Route::delete('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons/{lessonId}', [AdminLessonController::class, 'destroy'])
             ->name('courses.lessons.destroy');
         Route::patch('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons/{lessonId}/move', [AdminLessonController::class, 'move'])

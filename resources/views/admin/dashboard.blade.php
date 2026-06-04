@@ -72,7 +72,7 @@
                 <div class="text-left shrink-0">
                     <span class="text-xs text-slate-400 block">{{ $lesson->updated_at->diffForHumans() }}</span>
                     @if($course && $section)
-                    <a href="{{ route($lesson->isInSubSection() ? 'admin.courses.lessons.show' : 'admin.courses.section-lessons.show', $lesson->isInSubSection() ? \App\Support\NestedCourseRoute::subSectionLesson($course, $section, $sub, $lesson) : \App\Support\NestedCourseRoute::sectionLesson($course, $section, $lesson)) }}"
+                    <a href="{{ route($lesson->isInSubSection() ? 'admin.courses.lessons.edit' : 'admin.courses.section-lessons.edit', $lesson->isInSubSection() ? \App\Support\NestedCourseRoute::subSectionLesson($course, $section, $sub, $lesson) : \App\Support\NestedCourseRoute::sectionLesson($course, $section, $lesson)) }}"
                        class="text-xs text-thinkra-purple font-semibold hover:underline">عرض</a>
                     @endif
                 </div>
