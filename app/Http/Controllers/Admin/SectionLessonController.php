@@ -6,7 +6,7 @@ use App\Enums\LessonStatus;
 use App\Http\Controllers\Concerns\ReordersCourseStructure;
 use App\Http\Controllers\Concerns\ResolvesLessonPlacement;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Teacher\StoreLessonRequest;
+use App\Http\Requests\StoreLessonRequest;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Section;

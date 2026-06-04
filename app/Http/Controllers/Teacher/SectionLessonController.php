@@ -14,7 +14,7 @@ use App\Http\Controllers\Concerns\ResolvesLessonPlacement;
 
 use App\Http\Controllers\Controller;
 
-use App\Http\Requests\Teacher\StoreLessonRequest;
+use App\Http\Requests\StoreLessonRequest;
 
 use App\Http\Requests\Teacher\UpdateLessonRequest;
 

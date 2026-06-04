@@ -56,6 +56,15 @@ class Course extends Model
         return $this->hasMany(Section::class)->orderBy('sort_order');
     }
 
+    public function resolveChildRouteBinding($childType, $value, $field = null): ?Model
+    {
+        if ($childType === 'section') {
+            return $this->sections()->whereKey($value)->first();
+        }
+
+        return parent::resolveChildRouteBinding($childType, $value, $field);
+    }
+
     public function shareLinks(): HasMany
     {
         return $this->hasMany(CourseShareLink::class);

@@ -234,6 +234,23 @@ class StabilityTest extends TestCase
         $this->assertEquals('Old Title', $lesson->fresh()->title);
     }
 
+    public function test_admin_section_lesson_store_validation_redirects_back_not_404(): void
+    {
+        $data = $this->createStructure();
+        $admin = \App\Models\User::factory()->create(['role' => UserRole::Admin]);
+
+        $this->actingAs($admin)
+            ->from(route('admin.courses.show', $data['course']))
+            ->post(route('admin.courses.section-lessons.store', [
+                'course' => $data['course'],
+                'section' => $data['section'],
+            ]), ['title' => ''])
+            ->assertRedirect(route('admin.courses.show', $data['course']))
+            ->assertSessionHasErrors('title');
+
+        $this->assertSame(0, $data['section']->directLessons()->count());
+    }
+
     public function test_admin_section_lesson_store_via_post(): void
     {
         $data = $this->createStructure();
@@ -241,8 +258,8 @@ class StabilityTest extends TestCase
 
         $response = $this->actingAs($admin)
             ->post(route('admin.courses.section-lessons.store', [
-                'course' => $data['course'],
-                'section' => $data['section'],
+                'course' => $data['course']->id,
+                'section' => $data['section']->id,
             ]), [
                 'title' => 'Admin Direct Lesson',
                 'objective' => '',
