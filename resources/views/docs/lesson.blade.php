@@ -87,10 +87,12 @@
                         id="lesson-complete-btn"
                         class="lesson-complete-btn {{ $lessonComplete ? 'is-done' : '' }}"
                         data-complete-url="{{ $completeUrl }}"
+                        data-uncomplete-url="{{ $uncompleteUrl }}"
                         data-lesson-id="{{ $lesson->id }}"
-                        data-auto-advance="1">
+                        data-auto-advance="1"
+                        aria-pressed="{{ $lessonComplete ? 'true' : 'false' }}">
                     <span class="lesson-complete-icon" aria-hidden="true">✓</span>
-                    <span>{{ $lessonComplete ? 'تم إكمال الدرس' : 'تحديد الدرس كمكتمل' }}</span>
+                    <span>{{ $lessonComplete ? 'إلغاء إكمال الدرس' : 'تحديد الدرس كمكتمل' }}</span>
                 </button>
                 @else
                 <button type="button"

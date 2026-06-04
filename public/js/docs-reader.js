@@ -120,33 +120,87 @@
         }
     }
 
-    function applyCompletedUi(completedIds) {
-        const set = new Set(completedIds.map(Number));
-        document.querySelectorAll('.course-sidebar-lesson').forEach(function (link) {
-            const id = Number(link.dataset.lessonId);
-            link.classList.toggle('is-completed', set.has(id));
-            const icon = link.querySelector('.course-sidebar-lesson-icon');
-            if (!icon) return;
-            if (set.has(id) && !link.classList.contains('is-active')) {
-                icon.innerHTML = '<svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>';
-            }
-        });
-        updateProgressBar(set);
+    const LESSON_CHECK_ICON =
+        '<svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>';
+
+    function updateSidebarLessonIcon(link, isCompleted) {
+        const icon = link.querySelector('.course-sidebar-lesson-icon');
+        if (!icon) return;
+        const isActive = link.classList.contains('is-active');
+        if (isCompleted) {
+            icon.innerHTML = LESSON_CHECK_ICON;
+        } else if (isActive) {
+            icon.innerHTML = '<span class="course-sidebar-lesson-dot is-current"></span>';
+        } else {
+            icon.innerHTML = '<span class="course-sidebar-lesson-dot"></span>';
+        }
     }
 
-    function updateProgressBar(completedSet) {
+    function updateProgressLabels(stats) {
+        if (!stats || !stats.total) return;
+        const meta = document.querySelector('.lesson-meta-progress');
+        if (meta) {
+            meta.textContent =
+                stats.completed + ' من ' + stats.total + ' دروس · ' + stats.percent + '%';
+        }
+        const percentEl = document.querySelector('.lesson-course-progress-label .font-semibold');
+        if (percentEl) percentEl.textContent = stats.percent + '%';
+        const hint = document.querySelector('.lesson-course-progress-hint');
+        if (hint) hint.textContent = stats.remaining + ' دروس متبقية';
+        const sidebarMeta = document.querySelectorAll('.course-sidebar-progress-meta span');
+        if (sidebarMeta.length >= 2) {
+            sidebarMeta[0].textContent = stats.percent + '% مكتمل';
+            sidebarMeta[1].textContent = stats.completed + '/' + stats.total;
+        }
+        const bar = document.getElementById('lesson-course-progress-bar');
+        if (bar) bar.setAttribute('aria-valuenow', String(stats.percent));
+        const sidebarBar = document.querySelector('.course-sidebar-progress-track');
+        if (sidebarBar) sidebarBar.setAttribute('aria-valuenow', String(stats.percent));
+    }
+
+    function statsFromCompletedSet(completedSet) {
         const links = document.querySelectorAll('.course-sidebar-lesson[data-lesson-id]');
         const total = links.length;
-        if (!total) return;
         let completed = 0;
         links.forEach(function (l) {
             if (completedSet.has(Number(l.dataset.lessonId))) completed++;
         });
-        const percent = Math.round((completed / total) * 100);
+        const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        return {
+            total: total,
+            completed: completed,
+            remaining: Math.max(0, total - completed),
+            percent: percent,
+        };
+    }
+
+    function applyCompletedUi(completedIds, progressStats) {
+        const set = new Set(completedIds.map(Number));
+        document.querySelectorAll('.course-sidebar-lesson').forEach(function (link) {
+            const id = Number(link.dataset.lessonId);
+            const done = set.has(id);
+            link.classList.toggle('is-completed', done);
+            updateSidebarLessonIcon(link, done);
+        });
+        updateProgressBar(set);
+        updateProgressLabels(progressStats || statsFromCompletedSet(set));
+    }
+
+    function updateProgressBar(completedSet) {
+        const stats = statsFromCompletedSet(completedSet);
         const fill = document.querySelector('.lesson-course-progress-fill');
         const sidebarFill = document.querySelector('.course-sidebar-progress-fill');
-        if (fill) fill.style.width = percent + '%';
-        if (sidebarFill) sidebarFill.style.width = percent + '%';
+        if (fill) fill.style.width = stats.percent + '%';
+        if (sidebarFill) sidebarFill.style.width = stats.percent + '%';
+    }
+
+    function setCompleteButtonState(btn, done) {
+        btn.classList.toggle('is-done', done);
+        btn.setAttribute('aria-pressed', done ? 'true' : 'false');
+        btn.querySelector('span:last-child').textContent = done
+            ? 'إلغاء إكمال الدرس'
+            : 'تحديد الدرس كمكتمل';
     }
 
     let completedIds = config.completedIds ? config.completedIds.slice() : [];
@@ -163,19 +217,21 @@
         const lessonId = Number(completeBtn.dataset.lessonId);
         const autoAdvance = completeBtn.dataset.autoAdvance === '1';
 
-        if (!config.canTrackProgress && loadGuestCompleted().includes(lessonId)) {
-            completeBtn.classList.add('is-done');
-            completeBtn.querySelector('span:last-child').textContent = 'تم إكمال الدرس';
+        if (completeBtn.classList.contains('is-done')) {
+            setCompleteButtonState(completeBtn, true);
+        } else if (!config.canTrackProgress && loadGuestCompleted().includes(lessonId)) {
+            setCompleteButtonState(completeBtn, true);
         }
 
         completeBtn.addEventListener('click', async function () {
-            if (completeBtn.classList.contains('is-done') && config.canTrackProgress) {
-                return;
-            }
+            const isDone = completeBtn.classList.contains('is-done');
 
-            if (config.canTrackProgress && config.completeUrl) {
+            if (config.canTrackProgress) {
+                const url = isDone ? config.uncompleteUrl : config.completeUrl;
+                if (!url) return;
+
                 try {
-                    const res = await fetch(config.completeUrl, {
+                    const res = await fetch(url, {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json',
@@ -187,26 +243,32 @@
                     if (!data.ok) throw new Error();
 
                     completedIds = data.completedIds || [];
-                    applyCompletedUi(completedIds);
-                    completeBtn.classList.add('is-done');
-                    completeBtn.querySelector('span:last-child').textContent = 'تم إكمال الدرس';
+                    applyCompletedUi(completedIds, data.progress);
+                    setCompleteButtonState(completeBtn, !isDone);
 
-                    if (autoAdvance && data.nextUrl) {
+                    if (!isDone && autoAdvance && data.nextUrl) {
                         window.location.href = data.nextUrl;
                     }
                 } catch (e) {
                     alert('تعذر حفظ التقدم. حاول مرة أخرى.');
                 }
-            } else {
-                const ids = loadGuestCompleted();
-                if (!ids.includes(lessonId)) {
-                    ids.push(lessonId);
-                }
-                saveGuestCompleted(ids);
-                applyCompletedUi(ids);
-                completeBtn.classList.add('is-done');
-                completeBtn.querySelector('span:last-child').textContent = 'تم إكمال الدرس';
+                return;
+            }
 
+            let ids = loadGuestCompleted();
+            if (isDone) {
+                ids = ids.filter(function (id) {
+                    return Number(id) !== lessonId;
+                });
+            } else if (!ids.includes(lessonId)) {
+                ids.push(lessonId);
+            }
+            saveGuestCompleted(ids);
+            completedIds = ids;
+            applyCompletedUi(ids);
+            setCompleteButtonState(completeBtn, !isDone);
+
+            if (!isDone) {
                 const nextLink = document.querySelector('.lesson-nav-next');
                 if (autoAdvance && nextLink?.href) {
                     window.location.href = nextLink.href;

@@ -88,6 +88,7 @@ class DocsLessonController extends Controller
             'lessonComplete' => $lessonComplete,
             'canTrackProgress' => $user !== null && ! $preview,
             'completeUrl' => route('docs.lesson.complete', [$course->slug, $lesson->slug]),
+            'uncompleteUrl' => route('docs.lesson.uncomplete', [$course->slug, $lesson->slug]),
             'seo' => $enableSeo,
             'metaDescription' => $metaDescription,
             'canonicalUrl' => $lessonRoute,

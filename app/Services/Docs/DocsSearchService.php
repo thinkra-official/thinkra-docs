@@ -37,6 +37,7 @@ class DocsSearchService
             $results->push([
                 'type' => 'course',
                 'title' => $course->title,
+                'courseTitle' => '',
                 'excerpt' => Str::limit(strip_tags($course->description ?? ''), 120),
                 'url' => route('docs.course', $course->slug),
             ]);
@@ -53,7 +54,8 @@ class DocsSearchService
             $first = app(DocsReaderService::class)->firstLesson($section->course);
             $results->push([
                 'type' => 'section',
-                'title' => $section->course->title.' — فصل: '.$section->title,
+                'title' => $section->title,
+                'courseTitle' => $section->course->title,
                 'excerpt' => '',
                 'url' => $first
                     ? route('docs.lesson', [$section->course->slug, $first->slug])
@@ -73,7 +75,8 @@ class DocsSearchService
             $first = $sub->lessons()->published()->orderBy('sort_order')->first();
             $results->push([
                 'type' => 'sub_section',
-                'title' => $course->title.' — قسم: '.$sub->title,
+                'title' => $sub->title,
+                'courseTitle' => $course->title,
                 'excerpt' => '',
                 'url' => $first
                     ? route('docs.lesson', [$course->slug, $first->slug])
@@ -101,6 +104,7 @@ class DocsSearchService
             $results->push([
                 'type' => 'lesson',
                 'title' => $lesson->title,
+                'courseTitle' => $course->title,
                 'excerpt' => Str::limit(strip_tags($lesson->objective ?: $lesson->main_content ?? ''), 140),
                 'url' => route('docs.lesson', [$course->slug, $lesson->slug]),
             ]);

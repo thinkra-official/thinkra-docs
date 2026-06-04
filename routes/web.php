@@ -40,6 +40,9 @@ Route::prefix('docs')->name('docs.')->group(function () {
     Route::post('/{courseSlug}/{lessonSlug}/complete', [DocsLessonProgressController::class, 'complete'])
         ->middleware('auth')
         ->name('lesson.complete');
+    Route::post('/{courseSlug}/{lessonSlug}/uncomplete', [DocsLessonProgressController::class, 'uncomplete'])
+        ->middleware('auth')
+        ->name('lesson.uncomplete');
 });
 
 Route::get('/share/{token}', [ShareLinkController::class, 'show'])->name('share.show');

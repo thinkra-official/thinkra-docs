@@ -51,4 +51,33 @@ class DocsLessonProgressController extends Controller
             'nextUrl' => $nextUrl,
         ]);
     }
+
+    public function uncomplete(Request $request, string $courseSlug, string $lessonSlug): JsonResponse
+    {
+        $user = $request->user();
+        if (! $user) {
+            return response()->json(['ok' => false, 'message' => 'يجب تسجيل الدخول'], 401);
+        }
+
+        $course = $this->reader->courseBySlug($courseSlug);
+        if (! $course || ! $this->access->canViewCourse($course, $user, $request, false)) {
+            abort(404);
+        }
+
+        $lesson = $this->reader->findLessonInCourse($course, $lessonSlug, false);
+        if (! $lesson || ! $this->access->canViewLesson($lesson, $user, $request, false)) {
+            abort(404);
+        }
+
+        $this->progress->markIncomplete($user, $lesson);
+
+        $structure = $this->reader->loadCourseStructure($course, false);
+        $stats = $this->progress->statsForUser($user, $structure['flatLessons']);
+
+        return response()->json([
+            'ok' => true,
+            'completedIds' => $stats['completedIds'],
+            'progress' => $stats,
+        ]);
+    }
 }

@@ -57,7 +57,7 @@
         </div>
     </header>
 
-    <div class="docs-viewer-layout">
+    <div class="docs-viewer-layout @unless(isset($sections)) docs-viewer-layout--standalone @endunless">
         @isset($sections)
         <div id="docs-drawer-backdrop" class="docs-drawer-backdrop" hidden></div>
         <aside id="docs-sidebar-panel" class="docs-course-sidebar-panel" aria-label="محتوى الدورة">
@@ -87,6 +87,7 @@
             'completedIds' => $progressStats['completedIds'] ?? [],
             'canTrackProgress' => $canTrackProgress ?? false,
             'completeUrl' => $completeUrl ?? null,
+            'uncompleteUrl' => $uncompleteUrl ?? null,
             'storageKey' => 'thinkra_docs_progress_' . $course->id,
         ];
     @endphp

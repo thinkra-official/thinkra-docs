@@ -3,34 +3,95 @@
 @section('title', 'بحث — Thinkra Docs')
 
 @section('content')
-<div class="docs-article max-w-3xl">
-    <h1 class="text-2xl font-bold mb-6" style="color:var(--docs-accent-dark)">بحث في الوثائق</h1>
-    <p class="text-sm mb-4 opacity-70">البحث يشمل الدورات العامة والدروس المنشورة فقط.</p>
+@php
+    $typeLabels = [
+        'course' => 'دورة',
+        'section' => 'فصل',
+        'sub_section' => 'قسم',
+        'lesson' => 'درس',
+    ];
+@endphp
 
-    <form method="GET" action="{{ route('docs.search') }}" class="mb-8">
-        <div class="flex gap-2">
-            <input type="search" name="q" value="{{ $query }}" placeholder="ابحث عن درس، فصل، أو دورة..."
-                   class="flex-1 rounded-xl border px-4 py-3 text-base" style="border-color:var(--docs-border);background:var(--docs-bg)">
-            <button type="submit" class="rounded-xl px-6 py-3 text-white font-semibold shrink-0" style="background:#9e27b5">بحث</button>
+<div class="docs-search-page">
+    <div class="docs-search-inner">
+        <header class="docs-search-hero">
+            <div class="docs-search-hero-icon" aria-hidden="true">
+                <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+                </svg>
+            </div>
+            <h1 class="docs-search-title">بحث في الوثائق</h1>
+            <p class="docs-search-subtitle">ابحث في الدورات العامة والدروس المنشورة — فصول، أقسام، ومحتوى الدروس.</p>
+        </header>
+
+        <form method="GET" action="{{ route('docs.search') }}" class="docs-search-form" role="search">
+            <label for="docs-search-input" class="sr-only">كلمة البحث</label>
+            <div class="docs-search-field">
+                <span class="docs-search-field-icon" aria-hidden="true">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z"/>
+                    </svg>
+                </span>
+                <input
+                    type="search"
+                    id="docs-search-input"
+                    name="q"
+                    value="{{ $query }}"
+                    placeholder="ابحث عن درس، فصل، أو دورة..."
+                    class="docs-search-input"
+                    autocomplete="off"
+                    autofocus
+                >
+                <button type="submit" class="docs-search-submit">بحث</button>
+            </div>
+        </form>
+
+        @if($query === '')
+        <p class="docs-search-hint">جرّب البحث باسم الدرس أو عنوان الدورة للوصول السريع للمحتوى.</p>
+        @endif
+
+        @if($query !== '' && $results->isEmpty())
+        <div class="docs-search-empty" role="status">
+            <p class="docs-search-empty-title">لا توجد نتائج</p>
+            <p class="docs-search-empty-text">لم نجد شيئاً لـ «<strong>{{ $query }}</strong>». جرّب كلمات أخرى أو تحقق من الإملاء.</p>
         </div>
-    </form>
+        @endif
 
-    @if($query !== '' && $results->isEmpty())
-    <p class="opacity-70">لا توجد نتائج لـ «{{ $query }}».</p>
-    @endif
-
-    @if($results->isNotEmpty())
-    <ul class="space-y-4">
-        @foreach($results as $result)
-        <li class="rounded-xl border p-4" style="border-color:var(--docs-border)">
-            <span class="text-xs uppercase tracking-wide opacity-50">{{ $result['type'] }}</span>
-            <a href="{{ $result['url'] }}" class="block font-semibold mt-1 hover:underline" style="color:#9e27b5">{{ $result['title'] }}</a>
-            @if($result['excerpt'])
-            <p class="text-sm mt-2 opacity-70">{{ $result['excerpt'] }}</p>
-            @endif
-        </li>
-        @endforeach
-    </ul>
-    @endif
+        @if($results->isNotEmpty())
+        <section class="docs-search-results" aria-label="نتائج البحث">
+            <p class="docs-search-results-count">
+                {{ $results->count() }} {{ $results->count() === 1 ? 'نتيجة' : 'نتائج' }}
+                @if($query !== '')
+                <span class="docs-search-results-query">لـ «{{ $query }}»</span>
+                @endif
+            </p>
+            <ul class="docs-search-results-list">
+                @foreach($results as $result)
+                <li>
+                    <a href="{{ $result['url'] }}" class="docs-search-result-card">
+                        <span class="docs-search-result-body">
+                            <span class="docs-search-result-badge docs-search-result-badge--{{ $result['type'] }}">
+                                {{ $typeLabels[$result['type']] ?? $result['type'] }}
+                            </span>
+                            <span class="docs-search-result-title">{{ $result['title'] }}</span>
+                            @if(!empty($result['courseTitle']))
+                            <span class="docs-search-result-meta">{{ $result['courseTitle'] }}</span>
+                            @endif
+                            @if(!empty($result['excerpt']))
+                            <span class="docs-search-result-excerpt">{{ $result['excerpt'] }}</span>
+                            @endif
+                        </span>
+                        <span class="docs-search-result-arrow" aria-hidden="true">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                        </span>
+                    </a>
+                </li>
+                @endforeach
+            </ul>
+        </section>
+        @endif
+    </div>
 </div>
 @endsection

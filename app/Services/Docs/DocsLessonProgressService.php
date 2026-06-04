@@ -65,6 +65,14 @@ class DocsLessonProgressService
         );
     }
 
+    public function markIncomplete(User $user, Lesson $lesson): void
+    {
+        LessonUserProgress::query()
+            ->where('user_id', $user->id)
+            ->where('lesson_id', $lesson->id)
+            ->delete();
+    }
+
     public function isComplete(?User $user, Lesson $lesson, array $completedIds = []): bool
     {
         if ($user) {
