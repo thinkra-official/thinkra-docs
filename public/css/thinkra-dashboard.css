@@ -1,0 +1,114 @@
+/* Thinkra Docs Dashboard — matches main Thinkra dashboard style */
+.thinkra-dashboard {
+    --thinkra-purple: #9e27b5;
+    --thinkra-navy: #0f206c;
+    --thinkra-sidebar: #1b0738;
+    --thinkra-sidebar-alt: #21083f;
+    --thinkra-bg: #f6f7fb;
+    --thinkra-card-shadow: 0 4px 24px rgba(15, 32, 108, 0.06);
+}
+
+.thinkra-dashboard .thinkra-sidebar {
+    background: linear-gradient(180deg, var(--thinkra-sidebar-alt) 0%, var(--thinkra-sidebar) 100%);
+    box-shadow: -4px 0 24px rgba(27, 7, 56, 0.15);
+}
+
+.thinkra-dashboard .thinkra-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.75);
+    transition: background 0.2s, color 0.2s;
+    text-decoration: none;
+    width: 100%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    text-align: right;
+}
+
+.thinkra-dashboard a.thinkra-nav-link {
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.thinkra-dashboard .thinkra-nav-link.is-active {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.thinkra-dashboard .thinkra-nav-link:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.thinkra-dashboard a.thinkra-nav-link.is-active {
+    background: rgba(158, 39, 181, 0.35);
+    color: #fff;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.thinkra-dashboard .thinkra-nav-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.thinkra-dashboard .thinkra-topbar {
+    background: #fff;
+    box-shadow: 0 1px 0 rgba(15, 32, 108, 0.06);
+}
+
+.thinkra-dashboard .thinkra-card {
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: var(--thinkra-card-shadow);
+    border: 1px solid rgba(15, 32, 108, 0.04);
+}
+
+.thinkra-dashboard .thinkra-stat-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thinkra-dashboard .thinkra-btn-primary {
+    background: var(--thinkra-purple);
+    color: #fff;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.thinkra-dashboard .thinkra-btn-primary:hover {
+    opacity: 0.92;
+}
+
+.thinkra-dashboard .thinkra-btn-secondary {
+    background: var(--thinkra-navy);
+    color: #fff;
+    border-radius: 0.75rem;
+    font-weight: 600;
+}
+
+.thinkra-dashboard .thinkra-sidebar-panel {
+    isolation: isolate;
+}
+
+.thinkra-dashboard .thinkra-sidebar nav {
+    position: relative;
+    z-index: 2;
+}
