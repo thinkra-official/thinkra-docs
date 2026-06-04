@@ -13,16 +13,6 @@
     --docs-sticky-top: 4.5rem;
 }
 
-html.docs-dark {
-    --docs-bg: #0f172a;
-    --docs-surface: #1e293b;
-    --docs-text: #f1f5f9;
-    --docs-muted: #94a3b8;
-    --docs-border: #334155;
-    --docs-sidebar: #0b0420;
-    --docs-sidebar-text: #e9d5ff;
-}
-
 .docs-shell {
     min-height: 100vh;
     background: var(--docs-surface);
@@ -164,10 +154,6 @@ html.docs-dark {
     margin-bottom: 1rem;
 }
 
-html.docs-dark .docs-article h1 {
-    color: #fff;
-}
-
 .docs-prose {
     line-height: 1.8;
     font-size: 1.05rem;
@@ -178,12 +164,6 @@ html.docs-dark .docs-article h1 {
     font-weight: 700;
     margin: 1.5rem 0 0.75rem;
     color: var(--docs-accent-dark);
-}
-
-html.docs-dark .docs-prose h1,
-html.docs-dark .docs-prose h2,
-html.docs-dark .docs-prose h3 {
-    color: #f8fafc;
 }
 
 .docs-prose img { max-width: 100%; height: auto; border-radius: 0.5rem; }
@@ -307,7 +287,3 @@ html.docs-dark .docs-prose h3 {
     font-weight: 600;
 }
 
-html.docs-dark .docs-preview-banner {
-    background: #422006;
-    color: #fde68a;
-}

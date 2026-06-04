@@ -119,20 +119,6 @@
     max-width: none;
 }
 
-html.docs-dark .thinkra-lesson-prose {
-    color: #f1f5f9;
-}
-
-html.docs-dark .thinkra-lesson-prose h2,
-html.docs-dark .thinkra-lesson-prose h3 {
-    color: #f8fafc;
-}
-
-html.docs-dark .thinkra-lesson-prose blockquote {
-    background: rgba(158, 39, 181, 0.15);
-    color: #cbd5e1;
-}
-
 /* Live preview panel below TinyMCE */
 .thinkra-editor-preview {
     display: none;

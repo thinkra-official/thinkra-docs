@@ -44,7 +44,6 @@
             </div>
             <div class="flex items-center gap-2 shrink-0">
                 <a href="{{ route('docs.search') }}" class="text-sm px-3 py-1.5 rounded-lg border hidden sm:inline" style="border-color:var(--docs-border)">بحث</a>
-                <button type="button" data-docs-theme-toggle class="text-sm px-3 py-1.5 rounded-lg border" style="border-color:var(--docs-border)" title="الوضع الليلي">🌓</button>
                 @auth
                 <span class="text-xs opacity-60 hidden md:inline">{{ auth()->user()->name }}</span>
                 @else

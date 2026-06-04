@@ -1,24 +1,10 @@
 (function () {
-    const storageKey = 'thinkra-docs-theme';
-
-    function applyTheme(theme) {
-        document.documentElement.classList.toggle('docs-dark', theme === 'dark');
+    document.documentElement.classList.remove('docs-dark');
+    try {
+        localStorage.removeItem('thinkra-docs-theme');
+    } catch (e) {
+        /* ignore */
     }
-
-    const saved = localStorage.getItem(storageKey);
-    if (saved === 'dark' || saved === 'light') {
-        applyTheme(saved);
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        applyTheme('dark');
-    }
-
-    document.querySelectorAll('[data-docs-theme-toggle]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            const isDark = document.documentElement.classList.toggle('docs-dark');
-            const theme = isDark ? 'dark' : 'light';
-            localStorage.setItem(storageKey, theme);
-        });
-    });
 
     const progressBar = document.getElementById('docs-progress-bar');
     if (progressBar) {
