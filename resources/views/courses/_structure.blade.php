@@ -71,8 +71,8 @@
     $sectionDeleteMsg = "تحذير: حذف الفصل «{$section->title}» سيحذف نهائياً {$sectionSubs} قسم و {$totalLessons} درس. هل أنت متأكد؟";
 
     $sectionLessonStoreUrl = $isTeacher
-        ? route('teacher.section-lessons.store', ['course' => $course, 'section' => $section])
-        : route('admin.courses.section-lessons.store', ['course' => $course, 'section' => $section]);
+        ? route('teacher.section-lessons.store', ['courseId' => $course->id, 'sectionId' => $section->id])
+        : route('admin.courses.section-lessons.store', ['courseId' => $course->id, 'sectionId' => $section->id]);
 
 @endphp
 
@@ -268,8 +268,16 @@
         $subDeleteMsg = "تحذير: حذف القسم «{$subSection->title}» سيحذف نهائياً {$subLessons} درس. هل أنت متأكد؟";
 
         $subLessonStoreUrl = $isTeacher
-            ? route('teacher.lessons.store', ['course' => $course, 'section' => $section, 'subSection' => $subSection])
-            : route('admin.courses.lessons.store', ['course' => $course, 'section' => $section, 'subSection' => $subSection]);
+            ? route('teacher.lessons.store', [
+                'courseId' => $course->id,
+                'sectionId' => $section->id,
+                'subSectionId' => $subSection->id,
+            ])
+            : route('admin.courses.lessons.store', [
+                'courseId' => $course->id,
+                'sectionId' => $section->id,
+                'subSectionId' => $subSection->id,
+            ]);
 
     @endphp
 

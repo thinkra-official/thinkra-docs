@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\LessonStatus;
 use App\Http\Controllers\Concerns\ReordersCourseStructure;
+use App\Http\Controllers\Concerns\ResolvesCourseStructureFromRouteIds;
 use App\Http\Controllers\Concerns\ResolvesLessonPlacement;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLessonRequest;
@@ -13,11 +14,13 @@ use App\Models\Section;
 use App\Support\NestedCourseRoute;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class SectionLessonController extends Controller
 {
     use ReordersCourseStructure;
+    use ResolvesCourseStructureFromRouteIds;
     use ResolvesLessonPlacement;
 
     public function show(Course $course, Section $section, Lesson $lesson): View
@@ -33,9 +36,15 @@ class SectionLessonController extends Controller
         ]);
     }
 
-    public function store(StoreLessonRequest $request, Course $course, Section $section): RedirectResponse
+    public function store(StoreLessonRequest $request, int|string $courseId, int|string $sectionId): RedirectResponse
     {
-        $this->ensureSectionInCourse($course, $section);
+        Log::info('Admin SectionLessonController@store hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'title' => $request->input('title'),
+        ]);
+
+        [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
 
         $maxOrder = $section->directLessons()->max('sort_order') ?? 0;
 

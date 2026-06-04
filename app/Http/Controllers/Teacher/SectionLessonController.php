@@ -9,7 +9,7 @@ namespace App\Http\Controllers\Teacher;
 use App\Enums\LessonStatus;
 
 use App\Http\Controllers\Concerns\ReordersCourseStructure;
-
+use App\Http\Controllers\Concerns\ResolvesCourseStructureFromRouteIds;
 use App\Http\Controllers\Concerns\ResolvesLessonPlacement;
 
 use App\Http\Controllers\Controller;
@@ -31,9 +31,8 @@ use App\Services\LessonContentService;
 use App\Support\NestedCourseRoute;
 
 use Illuminate\Http\RedirectResponse;
-
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 
@@ -43,7 +42,7 @@ class SectionLessonController extends Controller
 {
 
     use ReordersCourseStructure;
-
+    use ResolvesCourseStructureFromRouteIds;
     use ResolvesLessonPlacement;
 
 
@@ -72,21 +71,20 @@ class SectionLessonController extends Controller
 
 
 
-    public function store(StoreLessonRequest $request, Course $course, Section $section): RedirectResponse
-
+    public function store(StoreLessonRequest $request, int|string $courseId, int|string $sectionId): RedirectResponse
     {
+        Log::info('Teacher SectionLessonController@store hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'title' => $request->input('title'),
+        ]);
+
+        [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
 
         $this->ensureCourseAccess($course);
-
-        $this->ensureSectionInCourse($course, $section);
-
         $this->authorize('update', $course);
 
-
-
         $maxOrder = $section->directLessons()->max('sort_order') ?? 0;
-
-
 
         $lesson = $section->directLessons()->create([
             ...$request->validated(),

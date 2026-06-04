@@ -181,7 +181,11 @@ class StabilityTest extends TestCase
         $nested = NestedCourseRoute::subSection($data['course'], $data['section'], $data['subSection']);
 
         $this->actingAs($data['teacher'])
-            ->post(route('teacher.lessons.store', $nested), ['title' => 'New Lesson'])
+            ->post(route('teacher.lessons.store', [
+                'courseId' => $data['course']->id,
+                'sectionId' => $data['section']->id,
+                'subSectionId' => $data['subSection']->id,
+            ]), ['title' => 'New Lesson'])
             ->assertRedirect()
             ->assertSessionHas('success');
 
@@ -242,8 +246,8 @@ class StabilityTest extends TestCase
         $this->actingAs($admin)
             ->from(route('admin.courses.show', $data['course']))
             ->post(route('admin.courses.section-lessons.store', [
-                'course' => $data['course'],
-                'section' => $data['section'],
+                'courseId' => $data['course']->id,
+                'sectionId' => $data['section']->id,
             ]), ['title' => ''])
             ->assertRedirect(route('admin.courses.show', $data['course']))
             ->assertSessionHasErrors('title');
@@ -258,8 +262,8 @@ class StabilityTest extends TestCase
 
         $response = $this->actingAs($admin)
             ->post(route('admin.courses.section-lessons.store', [
-                'course' => $data['course']->id,
-                'section' => $data['section']->id,
+                'courseId' => $data['course']->id,
+                'sectionId' => $data['section']->id,
             ]), [
                 'title' => 'Admin Direct Lesson',
                 'objective' => '',
@@ -288,8 +292,8 @@ class StabilityTest extends TestCase
             ->assertSee('Admin Direct Lesson');
 
         $this->get(route('admin.courses.section-lessons.store', [
-            'course' => $data['course'],
-            'section' => $data['section'],
+            'courseId' => $data['course']->id,
+            'sectionId' => $data['section']->id,
         ]))->assertMethodNotAllowed();
     }
 
@@ -299,7 +303,10 @@ class StabilityTest extends TestCase
         $sectionRoute = NestedCourseRoute::section($data['course'], $data['section']);
 
         $this->actingAs($data['teacher'])
-            ->post(route('teacher.section-lessons.store', $sectionRoute), ['title' => 'فصل درس'])
+            ->post(route('teacher.section-lessons.store', [
+                'courseId' => $data['course']->id,
+                'sectionId' => $data['section']->id,
+            ]), ['title' => 'فصل درس'])
             ->assertRedirect()
             ->assertSessionHas('success');
 

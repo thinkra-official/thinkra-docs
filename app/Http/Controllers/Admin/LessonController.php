@@ -9,7 +9,7 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\LessonStatus;
 
 use App\Http\Controllers\Concerns\ReordersCourseStructure;
-
+use App\Http\Controllers\Concerns\ResolvesCourseStructureFromRouteIds;
 use App\Http\Controllers\Concerns\ResolvesLessonPlacement;
 
 use App\Http\Controllers\Controller;
@@ -27,9 +27,8 @@ use App\Models\SubSection;
 use App\Support\NestedCourseRoute;
 
 use Illuminate\Http\RedirectResponse;
-
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 
@@ -39,7 +38,7 @@ class LessonController extends Controller
 {
 
     use ReordersCourseStructure;
-
+    use ResolvesCourseStructureFromRouteIds;
     use ResolvesLessonPlacement;
 
 
@@ -62,38 +61,37 @@ class LessonController extends Controller
 
 
 
-    public function store(StoreLessonRequest $request, Course $course, Section $section, SubSection $subSection): RedirectResponse
+    public function store(
+        StoreLessonRequest $request,
+        int|string $courseId,
+        int|string $sectionId,
+        int|string $subSectionId
+    ): RedirectResponse {
+        Log::info('Admin LessonController@store hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'subSectionId' => $subSectionId,
+            'title' => $request->input('title'),
+        ]);
 
-    {
-
-        $this->ensureSectionInCourse($course, $section);
-
-        $this->ensureSubSectionInSection($section, $subSection);
-
-
+        [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
+        $subSection = $this->resolveSubSectionInSection($section, $subSectionId);
 
         $maxOrder = $subSection->lessons()->max('sort_order') ?? 0;
 
-
-
         $lesson = $subSection->lessons()->create([
-
             ...$request->validated(),
-
+            'section_id' => null,
+            'sub_section_id' => $subSection->id,
             'status' => LessonStatus::Draft,
-
             'sort_order' => $maxOrder + 1,
-
         ]);
 
-
+        $lesson->refresh();
 
         return redirect()
-
             ->route('admin.courses.lessons.show', NestedCourseRoute::subSectionLesson($course, $section, $subSection, $lesson))
-
             ->with('success', 'تم إنشاء الدرس.');
-
     }
 
 
