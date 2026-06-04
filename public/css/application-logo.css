@@ -1,0 +1,65 @@
+/* THINKRA application logo — sizing without Tailwind dependency */
+.application-logo {
+    display: block;
+    width: auto;
+    height: 2.25rem;
+    max-width: 100%;
+    flex-shrink: 0;
+}
+
+.docs-brand {
+    --logo-height: clamp(1.75rem, 5vw, 2.35rem);
+    --logo-max-width: min(12.5rem, 46vw);
+}
+
+.docs-brand .application-logo {
+    height: var(--logo-height);
+    max-width: var(--logo-max-width);
+}
+
+.thinkra-sidebar-brand {
+    --logo-height: clamp(1.65rem, 4.5vw, 2rem);
+    --logo-max-width: 100%;
+}
+
+.thinkra-sidebar-brand .application-logo {
+    height: var(--logo-height);
+    max-width: var(--logo-max-width);
+}
+
+.thinkra-header-logo {
+    --logo-height: 1.75rem;
+    --logo-max-width: 8.5rem;
+}
+
+.thinkra-header-logo .application-logo {
+    height: var(--logo-height);
+    max-width: var(--logo-max-width);
+}
+
+.auth-logo-wrap {
+    --logo-height: clamp(2rem, 7vw, 2.75rem);
+    --logo-max-width: min(14rem, 85vw);
+}
+
+.auth-logo-wrap .application-logo {
+    height: var(--logo-height);
+    max-width: var(--logo-max-width);
+}
+
+@media (min-width: 1024px) {
+    .docs-brand {
+        --logo-max-width: 11.5rem;
+    }
+
+    .thinkra-header-logo {
+        display: none;
+    }
+}
+
+@media (min-width: 1280px) {
+    .docs-brand {
+        --logo-height: 2.35rem;
+        --logo-max-width: 13rem;
+    }
+}

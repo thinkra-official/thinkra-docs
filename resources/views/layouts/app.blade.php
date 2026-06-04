@@ -30,6 +30,7 @@
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
     <style>[x-cloak]{display:none!important}</style>
+    <link rel="stylesheet" href="{{ asset('css/application-logo.css') }}">
     @stack('head')
 </head>
 <body class="min-h-screen bg-[#f6f7fb] font-sans text-slate-800 antialiased">

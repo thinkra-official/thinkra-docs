@@ -1,4 +1,5 @@
 (function () {
+    function initDocsReader() {
     document.documentElement.classList.remove('docs-dark');
 
     const config = window.ThinkraDocsViewer || {};
@@ -18,27 +19,52 @@
 
     /* Mobile drawer */
     const drawerToggle = document.getElementById('docs-drawer-toggle');
+    const drawerClose = document.getElementById('docs-drawer-close');
     const sidebarPanel = document.getElementById('docs-sidebar-panel');
     const backdrop = document.getElementById('docs-drawer-backdrop');
 
+    function isMobileDrawer() {
+        return window.matchMedia('(max-width: 1023px)').matches;
+    }
+
     function setDrawerOpen(open) {
-        if (!sidebarPanel) return;
+        if (!sidebarPanel || !isMobileDrawer()) return;
         sidebarPanel.classList.toggle('is-open', open);
         if (backdrop) {
-            backdrop.hidden = !open;
-            requestAnimationFrame(function () {
-                backdrop.classList.toggle('is-visible', open);
-            });
+            if (open) {
+                backdrop.removeAttribute('hidden');
+                requestAnimationFrame(function () {
+                    backdrop.classList.add('is-visible');
+                });
+            } else {
+                backdrop.classList.remove('is-visible');
+                backdrop.setAttribute('hidden', '');
+            }
         }
         if (drawerToggle) {
             drawerToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
         }
+        document.body.classList.toggle('docs-drawer-open', open);
         document.body.style.overflow = open ? 'hidden' : '';
     }
 
+    function toggleDrawer(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        if (!sidebarPanel) return;
+        setDrawerOpen(!sidebarPanel.classList.contains('is-open'));
+    }
+
     if (drawerToggle && sidebarPanel) {
-        drawerToggle.addEventListener('click', function () {
-            setDrawerOpen(!sidebarPanel.classList.contains('is-open'));
+        drawerToggle.addEventListener('click', toggleDrawer);
+    }
+
+    if (drawerClose) {
+        drawerClose.addEventListener('click', function (e) {
+            e.preventDefault();
+            setDrawerOpen(false);
         });
     }
 
@@ -47,6 +73,26 @@
             setDrawerOpen(false);
         });
     }
+
+    document.querySelectorAll('.course-sidebar a').forEach(function (link) {
+        link.addEventListener('click', function () {
+            if (isMobileDrawer()) {
+                setDrawerOpen(false);
+            }
+        });
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && sidebarPanel?.classList.contains('is-open')) {
+            setDrawerOpen(false);
+        }
+    });
+
+    window.addEventListener('resize', function () {
+        if (!isMobileDrawer()) {
+            setDrawerOpen(false);
+        }
+    });
 
     /* Scroll active lesson into view in sidebar */
     const activeLesson = document.querySelector('.course-sidebar-lesson.is-active');
@@ -289,4 +335,11 @@
             window.location.href = prev.href;
         }
     });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDocsReader);
+    } else {
+        initDocsReader();
+    }
 })();

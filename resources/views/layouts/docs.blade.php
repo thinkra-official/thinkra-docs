@@ -19,6 +19,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ asset('css/application-logo.css') }}">
     <link rel="stylesheet" href="{{ asset('css/docs-reader.css') }}">
     <link rel="stylesheet" href="{{ asset('css/lesson-content.css') }}">
     @stack('head')
@@ -36,13 +37,13 @@
         <div class="docs-topbar-inner">
             <div class="docs-topbar-start">
                 @isset($sections)
-                <button type="button" id="docs-drawer-toggle" class="docs-icon-btn lg:hidden" aria-label="محتوى الدورة" aria-expanded="false" aria-controls="docs-sidebar-panel">
+                <button type="button" id="docs-drawer-toggle" class="docs-icon-btn docs-drawer-toggle-btn" aria-label="محتوى الدورة" aria-expanded="false" aria-controls="docs-sidebar-panel">
                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     <span class="docs-drawer-label">محتوى الدورة</span>
                 </button>
                 @endisset
-                <a href="{{ route('docs.search') }}" class="docs-brand">
-                    <x-application-logo class="h-8 w-auto sm:h-9" />
+                <a href="{{ route('docs.search') }}" class="docs-brand" aria-label="THINKRA">
+                    <x-application-logo />
                 </a>
                 @isset($course)
                 <span class="docs-topbar-course hidden sm:inline">{{ $course->title }}</span>

@@ -8,7 +8,7 @@
 @endphp
 
 <svg
-    {{ $attributes->merge(['class' => 'h-9 w-auto max-w-full']) }}
+    {{ $attributes->merge(['class' => 'application-logo']) }}
     viewBox="100 380 1770 300"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

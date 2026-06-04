@@ -25,8 +25,8 @@
                         ? route('teacher.dashboard')
                         : route('admin.dashboard');
                 @endphp
-                <a href="{{ $headerLogoUrl }}" class="lg:hidden thinkra-header-logo shrink-0" aria-label="THINKRA">
-                    <x-application-logo class="h-7 w-auto max-w-[7.5rem]" />
+                <a href="{{ $headerLogoUrl }}" class="thinkra-header-logo shrink-0" aria-label="THINKRA">
+                    <x-application-logo />
                 </a>
                 <div class="min-w-0">
                     <h1 class="text-lg font-bold text-thinkra-navy truncate">@yield('page-title', 'Thinkra Docs')</h1>

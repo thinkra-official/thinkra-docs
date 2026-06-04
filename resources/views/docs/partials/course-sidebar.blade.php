@@ -29,6 +29,7 @@
      aria-label="محتوى الدورة">
 
     <div class="course-sidebar-header">
+        <div class="course-sidebar-header-main">
         <a href="{{ ($preview ?? false) ? route('docs.preview.course', $course->slug) : route('docs.course', $course->slug) }}"
            class="course-sidebar-title">{{ $course->title }}</a>
         @if(($progress['total'] ?? 0) > 0)
@@ -43,6 +44,10 @@
             </div>
         </div>
         @endif
+        </div>
+        <button type="button" class="docs-drawer-close" id="docs-drawer-close" aria-label="إغلاق القائمة">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
     </div>
 
     <div class="course-sidebar-tree">

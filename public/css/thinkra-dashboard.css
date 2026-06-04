@@ -122,19 +122,13 @@
     line-height: 0;
 }
 
-.thinkra-dashboard .thinkra-sidebar-brand svg {
-    display: block;
-    width: auto;
-    max-width: 100%;
+.thinkra-dashboard .thinkra-sidebar-brand {
+    line-height: 1;
 }
 
 .thinkra-dashboard .thinkra-header-logo {
     display: inline-flex;
     align-items: center;
-    line-height: 0;
+    line-height: 1;
     text-decoration: none;
-}
-
-.thinkra-dashboard .thinkra-header-logo svg {
-    display: block;
 }

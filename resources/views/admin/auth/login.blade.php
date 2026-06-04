@@ -5,8 +5,8 @@
 @section('body')
 <div class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-thinkra-navy to-thinkra-purple/30">
     <div class="w-full max-w-md">
-        <div class="flex flex-col items-center mb-8 text-white">
-            <x-application-logo variant="light" class="h-10 w-auto sm:h-11" />
+        <div class="flex flex-col items-center mb-8 text-white auth-logo-wrap">
+            <x-application-logo variant="light" />
             <p class="text-white/80 mt-4 text-sm">لوحة الإدارة</p>
         </div>
         <div class="bg-white rounded-2xl shadow-xl p-8">

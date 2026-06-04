@@ -12,7 +12,7 @@
         <a href="{{ route('teacher.dashboard') }}"
            class="thinkra-sidebar-brand relative z-10"
            @click="sidebarOpen = false">
-            <x-application-logo variant="light" class="h-8 w-auto" />
+            <x-application-logo variant="light" />
             <span class="text-xs text-white/50 mt-2 block">بوابة الأستاذ</span>
         </a>
     </div>
