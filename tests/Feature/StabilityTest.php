@@ -234,6 +234,34 @@ class StabilityTest extends TestCase
         $this->assertEquals('Old Title', $lesson->fresh()->title);
     }
 
+    public function test_admin_section_lesson_store_via_post(): void
+    {
+        $data = $this->createStructure();
+        $admin = \App\Models\User::factory()->create(['role' => UserRole::Admin]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.courses.section-lessons.store', [
+                'course' => $data['course'],
+                'section' => $data['section'],
+            ]), [
+                'title' => 'Admin Direct Lesson',
+                'objective' => '',
+                'main_content' => '',
+                'teacher_notes' => '',
+            ])
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $this->assertNotNull(
+            $data['section']->directLessons()->where('title', 'Admin Direct Lesson')->first()
+        );
+
+        $this->get(route('admin.courses.section-lessons.store', [
+            'course' => $data['course'],
+            'section' => $data['section'],
+        ]))->assertMethodNotAllowed();
+    }
+
     public function test_section_lesson_store_and_edit(): void
     {
         $data = $this->createStructure();
