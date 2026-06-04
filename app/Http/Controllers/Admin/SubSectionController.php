@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Concerns\ReordersCourseStructure;
+use App\Http\Controllers\Concerns\ResolvesCourseStructureFromRouteIds;
 use App\Http\Controllers\Concerns\ResolvesSectionDeleteCounts;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
@@ -10,15 +11,23 @@ use App\Models\Section;
 use App\Models\SubSection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SubSectionController extends Controller
 {
     use ReordersCourseStructure;
+    use ResolvesCourseStructureFromRouteIds;
     use ResolvesSectionDeleteCounts;
 
-    public function store(Request $request, Course $course, Section $section): RedirectResponse
+    public function store(Request $request, int|string $courseId, int|string $sectionId): RedirectResponse
     {
-        abort_unless($section->course_id === $course->id, 404);
+        [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
+
+        Log::info('Admin SubSectionController@store hit', [
+            'courseId' => $course->id,
+            'sectionId' => $section->id,
+            'title' => $request->input('title'),
+        ]);
 
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],

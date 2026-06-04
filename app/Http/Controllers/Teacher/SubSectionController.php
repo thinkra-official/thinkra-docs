@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Concerns\ReordersCourseStructure;
+use App\Http\Controllers\Concerns\ResolvesCourseStructureFromRouteIds;
 use App\Http\Controllers\Concerns\ResolvesSectionDeleteCounts;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
@@ -15,6 +16,7 @@ use Illuminate\Http\Request;
 class SubSectionController extends Controller
 {
     use ReordersCourseStructure;
+    use ResolvesCourseStructureFromRouteIds;
     use ResolvesSectionDeleteCounts;
     public function __construct(
         protected CourseAccessService $access
@@ -27,10 +29,11 @@ class SubSectionController extends Controller
         }
     }
 
-    public function store(Request $request, Course $course, Section $section): RedirectResponse
+    public function store(Request $request, int|string $courseId, int|string $sectionId): RedirectResponse
     {
+        [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
+
         $this->ensureCourseAccess($course);
-        abort_unless($section->course_id === $course->id, 404);
         $this->authorize('manage', $course);
 
         $validated = $request->validate([

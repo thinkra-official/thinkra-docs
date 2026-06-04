@@ -88,6 +88,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::post('courses/{courseId}/sections/{sectionId}/lessons', [AdminSectionLessonController::class, 'store'])
             ->name('courses.section-lessons.store');
+        Route::post('courses/{courseId}/sections/{sectionId}/sub-sections', [AdminSubSectionController::class, 'store'])
+            ->name('courses.sub-sections.store');
         Route::post('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons', [AdminLessonController::class, 'store'])
             ->name('courses.lessons.store');
 
@@ -101,7 +103,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::delete('sections/{section}/lessons/{lesson}', [AdminSectionLessonController::class, 'destroy'])->name('section-lessons.destroy');
             Route::patch('sections/{section}/lessons/{lesson}/move', [AdminSectionLessonController::class, 'move'])->name('section-lessons.move');
 
-            Route::post('sections/{section}/sub-sections', [AdminSubSectionController::class, 'store'])->name('sub-sections.store');
             Route::put('sections/{section}/sub-sections/{subSection}', [AdminSubSectionController::class, 'update'])->name('sub-sections.update');
             Route::delete('sections/{section}/sub-sections/{subSection}', [AdminSubSectionController::class, 'destroy'])->name('sub-sections.destroy');
             Route::patch('sections/{section}/sub-sections/{subSection}/move', [AdminSubSectionController::class, 'move'])->name('sub-sections.move');
@@ -121,6 +122,8 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
 
     Route::post('courses/{courseId}/sections/{sectionId}/lessons', [TeacherSectionLessonController::class, 'store'])
         ->name('section-lessons.store');
+    Route::post('courses/{courseId}/sections/{sectionId}/sub-sections', [SubSectionController::class, 'store'])
+        ->name('sub-sections.store');
     Route::post('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons', [LessonController::class, 'store'])
         ->name('lessons.store');
 
@@ -141,7 +144,6 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
         Route::get('sections/{section}/lessons/{lesson}/versions/{version}', [LessonContentController::class, 'showVersionSection'])->name('section-lessons.versions.show');
         Route::post('sections/{section}/lessons/{lesson}/versions/{version}/restore', [LessonContentController::class, 'restoreSection'])->name('section-lessons.versions.restore');
 
-        Route::post('sections/{section}/sub-sections', [SubSectionController::class, 'store'])->name('sub-sections.store');
         Route::put('sections/{section}/sub-sections/{subSection}', [SubSectionController::class, 'update'])->name('sub-sections.update');
         Route::delete('sections/{section}/sub-sections/{subSection}', [SubSectionController::class, 'destroy'])->name('sub-sections.destroy');
         Route::patch('sections/{section}/sub-sections/{subSection}/move', [SubSectionController::class, 'move'])->name('sub-sections.move');

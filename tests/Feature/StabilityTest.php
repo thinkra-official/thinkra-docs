@@ -149,10 +149,11 @@ class StabilityTest extends TestCase
     public function test_sub_section_crud_and_reorder(): void
     {
         $data = $this->createStructure();
-        $route = NestedCourseRoute::section($data['course'], $data['section']);
-
         $this->actingAs($data['teacher'])
-            ->post(route('teacher.sub-sections.store', $route), ['title' => 'SS2'])
+            ->post(route('teacher.sub-sections.store', [
+                'courseId' => $data['course']->id,
+                'sectionId' => $data['section']->id,
+            ]), ['title' => 'SS2'])
             ->assertRedirect()
             ->assertSessionHas('success');
 

@@ -74,6 +74,10 @@
         ? route('teacher.section-lessons.store', ['courseId' => $course->id, 'sectionId' => $section->id])
         : route('admin.courses.section-lessons.store', ['courseId' => $course->id, 'sectionId' => $section->id]);
 
+    $subSectionStoreUrl = $isTeacher
+        ? route('teacher.sub-sections.store', ['courseId' => $course->id, 'sectionId' => $section->id])
+        : route('admin.courses.sub-sections.store', ['courseId' => $course->id, 'sectionId' => $section->id]);
+
 @endphp
 
 <div class="thinkra-card mb-6 overflow-hidden" x-data="{ openSub: false, editSection: false }">
@@ -173,7 +177,7 @@
 
     @if($canManage)
 
-    <form x-show="openSub" x-cloak method="POST" action="{{ $route('sub-sections.store', ['course' => $course, 'section' => $section]) }}" class="px-4 py-3 border-b bg-[#f6f7fb] flex gap-2">
+    <form x-show="openSub" x-cloak method="POST" action="{{ $subSectionStoreUrl }}" class="px-4 py-3 border-b bg-[#f6f7fb] flex gap-2">
 
         @csrf
 
