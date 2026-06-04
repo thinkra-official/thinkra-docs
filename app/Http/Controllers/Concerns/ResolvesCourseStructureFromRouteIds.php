@@ -44,8 +44,10 @@ trait ResolvesCourseStructureFromRouteIds
 
         $lesson = Lesson::query()
             ->where('section_id', $section->id)
-            ->whereNull('sub_section_id')
             ->whereKey($lessonId)
+            ->where(function ($query) {
+                $query->whereNull('sub_section_id')->orWhere('sub_section_id', 0);
+            })
             ->firstOrFail();
 
         return [$course, $section, $lesson];
@@ -65,7 +67,6 @@ trait ResolvesCourseStructureFromRouteIds
 
         $lesson = Lesson::query()
             ->where('sub_section_id', $subSection->id)
-            ->whereNull('section_id')
             ->whereKey($lessonId)
             ->firstOrFail();
 

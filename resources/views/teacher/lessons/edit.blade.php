@@ -190,11 +190,12 @@
     $lessonDestroyUrl = route($destroyRoute, $lessonDestroyRoute);
 @endphp
 <div class="thinkra-card p-5 border-red-200 mt-6">
-    <!-- delete action: {{ $lessonDestroyUrl }} -->
+    <!-- lesson delete action: {{ $lessonDestroyUrl }} -->
     <form method="POST" action="{{ $lessonDestroyUrl }}"
           onsubmit="return confirm('هل تريد حذف هذا الدرس نهائياً؟')">
         @csrf
         @method('DELETE')
+        <input type="hidden" name="_method" value="DELETE">
         <button type="submit" class="text-sm text-red-600 font-semibold hover:underline">حذف الدرس</button>
     </form>
 </div>

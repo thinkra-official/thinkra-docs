@@ -93,6 +93,13 @@ class LessonController extends Controller
         int|string $subSectionId,
         int|string $lessonId
     ): RedirectResponse {
+        Log::info('Admin LessonController@destroy hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'subSectionId' => $subSectionId,
+            'lessonId' => $lessonId,
+        ]);
+
         [$course, $section, $subSection, $lesson] = $this->resolveSubSectionLesson(
             $courseId,
             $sectionId,
@@ -102,18 +109,11 @@ class LessonController extends Controller
 
         $this->assertLessonBelongsToSubSection($lesson, $subSection);
 
-        Log::info('Admin LessonController@destroy hit', [
-            'courseId' => $course->id,
-            'sectionId' => $section->id,
-            'subSectionId' => $subSection->id,
-            'lessonId' => $lesson->id,
-        ]);
-
         $title = $lesson->title;
         $lesson->delete();
 
         return redirect()
-            ->route('admin.courses.show', $course)
+            ->route('admin.courses.show', $course->id)
             ->with('success', "تم حذف الدرس «{$title}».");
     }
 

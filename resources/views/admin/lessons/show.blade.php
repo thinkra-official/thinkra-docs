@@ -42,11 +42,12 @@
         : route('admin.courses.section-lessons.destroy', \App\Support\NestedCourseRoute::sectionLessonDestroy($course, $section, $lesson));
 @endphp
 <div class="mt-8 thinkra-card p-5 border-red-200">
-    <!-- delete action: {{ $lessonDestroyUrl }} -->
+    <!-- lesson delete action: {{ $lessonDestroyUrl }} -->
     <form method="POST" action="{{ $lessonDestroyUrl }}"
           onsubmit="return confirm('هل تريد حذف هذا الدرس نهائياً؟')">
         @csrf
         @method('DELETE')
+        <input type="hidden" name="_method" value="DELETE">
         <button type="submit" class="text-sm text-red-600 font-semibold hover:underline">حذف الدرس</button>
     </form>
 </div>

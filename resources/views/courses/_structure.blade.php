@@ -248,20 +248,25 @@
                 @if($canEditContent)
 
                 @php
-                    $directLessonDestroyUrl = $isTeacher
-                        ? route('teacher.section-lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'lessonId' => $lesson->id])
-                        : route('admin.courses.section-lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'lessonId' => $lesson->id]);
+                    $lessonDeleteUrl = $isTeacher
+                        ? route('teacher.section-lessons.destroy', [
+                            'courseId' => $course->id,
+                            'sectionId' => $section->id,
+                            'lessonId' => $lesson->id,
+                        ])
+                        : route('admin.courses.section-lessons.destroy', [
+                            'courseId' => $course->id,
+                            'sectionId' => $section->id,
+                            'lessonId' => $lesson->id,
+                        ]);
                 @endphp
-                <!-- delete action: {{ $directLessonDestroyUrl }} -->
-                <form method="POST" action="{{ $directLessonDestroyUrl }}"
-
+                <!-- lesson delete action: {{ $lessonDeleteUrl }} -->
+                <form method="POST" action="{{ $lessonDeleteUrl }}"
                       onsubmit="return confirm('هل تريد حذف الدرس «{{ $lesson->title }}» نهائياً؟')">
-
                     @csrf
                     @method('DELETE')
-
+                    <input type="hidden" name="_method" value="DELETE">
                     <button type="submit" class="text-red-600 hover:underline text-xs">حذف</button>
-
                 </form>
 
                 @endif
@@ -447,20 +452,27 @@
                     @if($canEditContent)
 
                     @php
-                        $subLessonDestroyUrl = $isTeacher
-                            ? route('teacher.lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'subSectionId' => $subSection->id, 'lessonId' => $lesson->id])
-                            : route('admin.courses.lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'subSectionId' => $subSection->id, 'lessonId' => $lesson->id]);
+                        $lessonDeleteUrl = $isTeacher
+                            ? route('teacher.lessons.destroy', [
+                                'courseId' => $course->id,
+                                'sectionId' => $section->id,
+                                'subSectionId' => $subSection->id,
+                                'lessonId' => $lesson->id,
+                            ])
+                            : route('admin.courses.lessons.destroy', [
+                                'courseId' => $course->id,
+                                'sectionId' => $section->id,
+                                'subSectionId' => $subSection->id,
+                                'lessonId' => $lesson->id,
+                            ]);
                     @endphp
-                    <!-- delete action: {{ $subLessonDestroyUrl }} -->
-                    <form method="POST" action="{{ $subLessonDestroyUrl }}"
-
+                    <!-- lesson delete action: {{ $lessonDeleteUrl }} -->
+                    <form method="POST" action="{{ $lessonDeleteUrl }}"
                           onsubmit="return confirm('هل تريد حذف الدرس «{{ $lesson->title }}» نهائياً؟')">
-
                         @csrf
                         @method('DELETE')
-
+                        <input type="hidden" name="_method" value="DELETE">
                         <button type="submit" class="text-red-600 hover:underline text-xs">حذف</button>
-
                     </form>
 
                     @endif

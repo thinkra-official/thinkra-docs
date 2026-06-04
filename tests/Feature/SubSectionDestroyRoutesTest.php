@@ -37,8 +37,8 @@ class SubSectionDestroyRoutesTest extends TestCase
                 'sectionId' => $data['section']->id,
                 'subSectionId' => $data['subSection']->id,
             ]))
-            ->assertRedirect(route('admin.courses.show', $data['course']))
-            ->assertSessionHas('success');
+            ->assertRedirect(route('admin.courses.show', $data['course']->id))
+            ->assertSessionHas('success', 'تم حذف القسم الفرعي بنجاح');
 
         $this->assertDatabaseMissing('sub_sections', ['id' => $data['subSection']->id]);
     }
@@ -53,8 +53,8 @@ class SubSectionDestroyRoutesTest extends TestCase
                 'sectionId' => $data['section']->id,
                 'subSectionId' => $data['subSection']->id,
             ]))
-            ->assertRedirect(route('teacher.courses.show', $data['course']))
-            ->assertSessionHas('success');
+            ->assertRedirect(route('teacher.courses.show', $data['course']->id))
+            ->assertSessionHas('success', 'تم حذف القسم الفرعي بنجاح');
 
         $this->assertDatabaseMissing('sub_sections', ['id' => $data['subSection']->id]);
     }

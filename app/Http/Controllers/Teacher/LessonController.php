@@ -220,6 +220,13 @@ class LessonController extends Controller
         int|string $subSectionId,
         int|string $lessonId
     ): RedirectResponse {
+        Log::info('Teacher LessonController@destroy hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'subSectionId' => $subSectionId,
+            'lessonId' => $lessonId,
+        ]);
+
         [$course, $section, $subSection, $lesson] = $this->resolveSubSectionLesson(
             $courseId,
             $sectionId,
@@ -231,18 +238,11 @@ class LessonController extends Controller
         $this->assertLessonBelongsToSubSection($lesson, $subSection);
         $this->authorize('update', $lesson);
 
-        Log::info('Teacher LessonController@destroy hit', [
-            'courseId' => $course->id,
-            'sectionId' => $section->id,
-            'subSectionId' => $subSection->id,
-            'lessonId' => $lesson->id,
-        ]);
-
         $title = $lesson->title;
         $lesson->delete();
 
         return redirect()
-            ->route('teacher.courses.show', $course)
+            ->route('teacher.courses.show', $course->id)
             ->with('success', "تم حذف الدرس «{$title}».");
     }
 

@@ -68,18 +68,12 @@ class SubSectionController extends Controller
             'subSectionId' => $subSection->id,
         ]);
 
-        $lessonsCount = $this->subSectionDeleteSummary($subSection);
+        $this->subSectionDeleteSummary($subSection);
         $subSection->delete();
 
-        $message = 'تم حذف الصب قسم';
-        if ($lessonsCount > 0) {
-            $message .= " مع {$lessonsCount} درس";
-        }
-        $message .= '.';
-
         return redirect()
-            ->route('admin.courses.show', $course)
-            ->with('success', $message);
+            ->route('admin.courses.show', $course->id)
+            ->with('success', 'تم حذف القسم الفرعي بنجاح');
     }
 
     public function move(Request $request, Course $course, Section $section, SubSection $subSection): RedirectResponse

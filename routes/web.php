@@ -96,10 +96,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->name('courses.sub-sections.destroy');
         Route::post('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons', [AdminLessonController::class, 'store'])
             ->name('courses.lessons.store');
-        Route::delete('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}', [AdminSectionLessonController::class, 'destroy'])
-            ->name('courses.section-lessons.destroy');
         Route::delete('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons/{lessonId}', [AdminLessonController::class, 'destroy'])
             ->name('courses.lessons.destroy');
+        Route::delete('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}', [AdminSectionLessonController::class, 'destroy'])
+            ->name('courses.section-lessons.destroy');
 
         Route::prefix('courses/{course}')->name('courses.')->scopeBindings()->group(function () {
             Route::post('sections', [AdminSectionController::class, 'store'])->name('sections.store');
@@ -134,10 +134,10 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
         ->name('sub-sections.destroy');
     Route::post('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons', [LessonController::class, 'store'])
         ->name('lessons.store');
-    Route::delete('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}', [TeacherSectionLessonController::class, 'destroy'])
-        ->name('section-lessons.destroy');
     Route::delete('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons/{lessonId}', [LessonController::class, 'destroy'])
         ->name('lessons.destroy');
+    Route::delete('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}', [TeacherSectionLessonController::class, 'destroy'])
+        ->name('section-lessons.destroy');
 
     Route::prefix('courses/{course}')->scopeBindings()->group(function () {
         Route::get('/', [TeacherCourseController::class, 'show'])->name('courses.show');

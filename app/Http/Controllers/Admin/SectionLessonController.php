@@ -56,20 +56,20 @@ class SectionLessonController extends Controller
 
     public function destroy(int|string $courseId, int|string $sectionId, int|string $lessonId): RedirectResponse
     {
+        Log::info('Admin SectionLessonController@destroy hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'lessonId' => $lessonId,
+        ]);
+
         [$course, $section, $lesson] = $this->resolveDirectSectionLesson($courseId, $sectionId, $lessonId);
         $this->assertLessonBelongsToSection($lesson, $section);
-
-        Log::info('Admin SectionLessonController@destroy hit', [
-            'courseId' => $course->id,
-            'sectionId' => $section->id,
-            'lessonId' => $lesson->id,
-        ]);
 
         $title = $lesson->title;
         $lesson->delete();
 
         return redirect()
-            ->route('admin.courses.show', $course)
+            ->route('admin.courses.show', $course->id)
             ->with('success', "تم حذف الدرس «{$title}».");
     }
 
