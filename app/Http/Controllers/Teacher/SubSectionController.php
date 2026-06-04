@@ -12,6 +12,7 @@ use App\Models\SubSection;
 use App\Services\CourseAccessService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SubSectionController extends Controller
 {
@@ -66,12 +67,19 @@ class SubSectionController extends Controller
         return back()->with('success', 'تم تحديث القسم.');
     }
 
-    public function destroy(Course $course, Section $section, SubSection $subSection): RedirectResponse
+    public function destroy(int|string $courseId, int|string $sectionId, int|string $subSectionId): RedirectResponse
     {
+        [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
+        $subSection = $this->resolveSubSectionInSection($section, $subSectionId);
+
         $this->ensureCourseAccess($course);
-        abort_unless($section->course_id === $course->id, 404);
-        abort_unless($subSection->section_id === $section->id, 404);
         $this->authorize('manage', $course);
+
+        Log::info('Teacher SubSectionController@destroy hit', [
+            'courseId' => $course->id,
+            'sectionId' => $section->id,
+            'subSectionId' => $subSection->id,
+        ]);
 
         $lessonsCount = $this->subSectionDeleteSummary($subSection);
         $subSection->delete();
@@ -82,7 +90,9 @@ class SubSectionController extends Controller
         }
         $message .= '.';
 
-        return back()->with('success', $message);
+        return redirect()
+            ->route('teacher.courses.show', $course)
+            ->with('success', $message);
     }
 
     public function move(Request $request, Course $course, Section $section, SubSection $subSection): RedirectResponse

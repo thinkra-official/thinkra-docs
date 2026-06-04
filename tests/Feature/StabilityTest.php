@@ -141,7 +141,10 @@ class StabilityTest extends TestCase
             ->assertSessionHas('success');
 
         $this->actingAs($data['teacher'])
-            ->delete(route('teacher.sections.destroy', NestedCourseRoute::section($course, $data['section'])))
+            ->delete(route('teacher.sections.destroy', [
+                'courseId' => $course->id,
+                'sectionId' => $data['section']->id,
+            ]))
             ->assertRedirect()
             ->assertSessionHas('success');
     }

@@ -3,16 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Concerns\ReordersCourseStructure;
+use App\Http\Controllers\Concerns\ResolvesCourseStructureFromRouteIds;
 use App\Http\Controllers\Concerns\ResolvesSectionDeleteCounts;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Section;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SectionController extends Controller
 {
     use ReordersCourseStructure;
+    use ResolvesCourseStructureFromRouteIds;
     use ResolvesSectionDeleteCounts;
 
     public function store(Request $request, Course $course): RedirectResponse
@@ -44,9 +47,14 @@ class SectionController extends Controller
         return back()->with('success', 'تم تحديث القسم.');
     }
 
-    public function destroy(Course $course, Section $section): RedirectResponse
+    public function destroy(int|string $courseId, int|string $sectionId): RedirectResponse
     {
-        abort_unless($section->course_id === $course->id, 404);
+        [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
+
+        Log::info('Admin SectionController@destroy hit', [
+            'courseId' => $course->id,
+            'sectionId' => $section->id,
+        ]);
 
         $summary = $this->sectionDeleteSummary($section);
         $section->delete();
@@ -61,7 +69,9 @@ class SectionController extends Controller
         }
         $message .= '.';
 
-        return back()->with('success', $message);
+        return redirect()
+            ->route('admin.courses.show', $course)
+            ->with('success', $message);
     }
 
     public function move(Request $request, Course $course, Section $section): RedirectResponse

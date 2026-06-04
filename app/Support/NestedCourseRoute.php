@@ -18,6 +18,25 @@ final class NestedCourseRoute
         ];
     }
 
+    /** Route parameters for destroying a section (raw IDs). */
+    public static function sectionDestroy(Course $course, Section $section): array
+    {
+        return [
+            'courseId' => $course->id,
+            'sectionId' => $section->id,
+        ];
+    }
+
+    /** Route parameters for destroying a sub-section (raw IDs). */
+    public static function subSectionDestroy(Course $course, Section $section, SubSection $subSection): array
+    {
+        return [
+            'courseId' => $course->id,
+            'sectionId' => $section->id,
+            'subSectionId' => $subSection->id,
+        ];
+    }
+
     public static function subSection(Course $course, Section $section, SubSection $subSection): array
     {
         return [

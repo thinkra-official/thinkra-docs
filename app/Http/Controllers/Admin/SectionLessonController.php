@@ -13,6 +13,7 @@ use App\Models\Lesson;
 use App\Models\Section;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class SectionLessonController extends Controller
@@ -57,6 +58,12 @@ class SectionLessonController extends Controller
     {
         [$course, $section, $lesson] = $this->resolveDirectSectionLesson($courseId, $sectionId, $lessonId);
         $this->assertLessonBelongsToSection($lesson, $section);
+
+        Log::info('Admin SectionLessonController@destroy hit', [
+            'courseId' => $course->id,
+            'sectionId' => $section->id,
+            'lessonId' => $lesson->id,
+        ]);
 
         $title = $lesson->title;
         $lesson->delete();

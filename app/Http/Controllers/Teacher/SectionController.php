@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Concerns\ReordersCourseStructure;
+use App\Http\Controllers\Concerns\ResolvesCourseStructureFromRouteIds;
 use App\Http\Controllers\Concerns\ResolvesSectionDeleteCounts;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
@@ -10,10 +11,12 @@ use App\Models\Section;
 use App\Services\CourseAccessService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SectionController extends Controller
 {
     use ReordersCourseStructure;
+    use ResolvesCourseStructureFromRouteIds;
     use ResolvesSectionDeleteCounts;
     public function __construct(
         protected CourseAccessService $access
@@ -60,11 +63,17 @@ class SectionController extends Controller
         return back()->with('success', 'تم تحديث الفصل.');
     }
 
-    public function destroy(Course $course, Section $section): RedirectResponse
+    public function destroy(int|string $courseId, int|string $sectionId): RedirectResponse
     {
+        [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
+
         $this->ensureCourseAccess($course);
-        abort_unless($section->course_id === $course->id, 404);
         $this->authorize('manage', $course);
+
+        Log::info('Teacher SectionController@destroy hit', [
+            'courseId' => $course->id,
+            'sectionId' => $section->id,
+        ]);
 
         $summary = $this->sectionDeleteSummary($section);
         $section->delete();
@@ -79,7 +88,9 @@ class SectionController extends Controller
         }
         $message .= '.';
 
-        return back()->with('success', $message);
+        return redirect()
+            ->route('teacher.courses.show', $course)
+            ->with('success', $message);
     }
 
     public function move(Request $request, Course $course, Section $section): RedirectResponse

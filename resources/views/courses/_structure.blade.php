@@ -78,6 +78,10 @@
         ? route('teacher.sub-sections.store', ['courseId' => $course->id, 'sectionId' => $section->id])
         : route('admin.courses.sub-sections.store', ['courseId' => $course->id, 'sectionId' => $section->id]);
 
+    $sectionDestroyUrl = $isTeacher
+        ? route('teacher.sections.destroy', ['courseId' => $course->id, 'sectionId' => $section->id])
+        : route('admin.courses.sections.destroy', ['courseId' => $course->id, 'sectionId' => $section->id]);
+
 @endphp
 
 <div class="thinkra-card mb-6 overflow-hidden" x-data="{ openSub: false, editSection: false }">
@@ -146,9 +150,11 @@
 
             <button @click="openSub = !openSub" type="button" class="text-thinkra-navy font-semibold">+ قسم</button>
 
-            <form method="POST" action="{{ $route('sections.destroy', ['course' => $course, 'section' => $section]) }}" onsubmit="return confirm(@js($sectionDeleteMsg))">
+            <!-- delete action: {{ $sectionDestroyUrl }} -->
+            <form method="POST" action="{{ $sectionDestroyUrl }}" onsubmit="return confirm(@js($sectionDeleteMsg))">
 
-                @csrf @method('DELETE')
+                @csrf
+                @method('DELETE')
 
                 <button type="submit" class="text-red-600 hover:underline">حذف</button>
 
@@ -241,11 +247,18 @@
 
                 @if($canEditContent)
 
-                <form method="POST" action="{{ $isTeacher ? route('teacher.section-lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'lessonId' => $lesson->id]) : route('admin.courses.section-lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'lessonId' => $lesson->id]) }}"
+                @php
+                    $directLessonDestroyUrl = $isTeacher
+                        ? route('teacher.section-lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'lessonId' => $lesson->id])
+                        : route('admin.courses.section-lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'lessonId' => $lesson->id]);
+                @endphp
+                <!-- delete action: {{ $directLessonDestroyUrl }} -->
+                <form method="POST" action="{{ $directLessonDestroyUrl }}"
 
                       onsubmit="return confirm('هل تريد حذف الدرس «{{ $lesson->title }}» نهائياً؟')">
 
-                    @csrf @method('DELETE')
+                    @csrf
+                    @method('DELETE')
 
                     <button type="submit" class="text-red-600 hover:underline text-xs">حذف</button>
 
@@ -349,9 +362,16 @@
 
                 <button type="button" @click="editSub = !editSub" class="text-thinkra-navy hover:underline">تعديل</button>
 
-                <form method="POST" action="{{ $route('sub-sections.destroy', ['course' => $course, 'section' => $section, 'subSection' => $subSection]) }}" onsubmit="return confirm(@js($subDeleteMsg))">
+                @php
+                    $subSectionDestroyUrl = $isTeacher
+                        ? route('teacher.sub-sections.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'subSectionId' => $subSection->id])
+                        : route('admin.courses.sub-sections.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'subSectionId' => $subSection->id]);
+                @endphp
+                <!-- delete action: {{ $subSectionDestroyUrl }} -->
+                <form method="POST" action="{{ $subSectionDestroyUrl }}" onsubmit="return confirm(@js($subDeleteMsg))">
 
-                    @csrf @method('DELETE')
+                    @csrf
+                    @method('DELETE')
 
                     <button type="submit" class="text-red-600 hover:underline">حذف</button>
 
@@ -426,11 +446,18 @@
 
                     @if($canEditContent)
 
-                    <form method="POST" action="{{ $isTeacher ? route('teacher.lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'subSectionId' => $subSection->id, 'lessonId' => $lesson->id]) : route('admin.courses.lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'subSectionId' => $subSection->id, 'lessonId' => $lesson->id]) }}"
+                    @php
+                        $subLessonDestroyUrl = $isTeacher
+                            ? route('teacher.lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'subSectionId' => $subSection->id, 'lessonId' => $lesson->id])
+                            : route('admin.courses.lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'subSectionId' => $subSection->id, 'lessonId' => $lesson->id]);
+                    @endphp
+                    <!-- delete action: {{ $subLessonDestroyUrl }} -->
+                    <form method="POST" action="{{ $subLessonDestroyUrl }}"
 
                           onsubmit="return confirm('هل تريد حذف الدرس «{{ $lesson->title }}» نهائياً؟')">
 
-                        @csrf @method('DELETE')
+                        @csrf
+                        @method('DELETE')
 
                         <button type="submit" class="text-red-600 hover:underline text-xs">حذف</button>
 

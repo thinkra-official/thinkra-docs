@@ -34,6 +34,7 @@ use App\Support\NestedCourseRoute;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 
@@ -229,6 +230,13 @@ class LessonController extends Controller
         $this->ensureCourseAccess($course);
         $this->assertLessonBelongsToSubSection($lesson, $subSection);
         $this->authorize('update', $lesson);
+
+        Log::info('Teacher LessonController@destroy hit', [
+            'courseId' => $course->id,
+            'sectionId' => $section->id,
+            'subSectionId' => $subSection->id,
+            'lessonId' => $lesson->id,
+        ]);
 
         $title = $lesson->title;
         $lesson->delete();

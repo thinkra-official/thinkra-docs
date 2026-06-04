@@ -57,10 +57,16 @@ class SubSectionController extends Controller
         return back()->with('success', 'تم تحديث الصب قسم.');
     }
 
-    public function destroy(Course $course, Section $section, SubSection $subSection): RedirectResponse
+    public function destroy(int|string $courseId, int|string $sectionId, int|string $subSectionId): RedirectResponse
     {
-        abort_unless($section->course_id === $course->id, 404);
-        abort_unless($subSection->section_id === $section->id, 404);
+        [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
+        $subSection = $this->resolveSubSectionInSection($section, $subSectionId);
+
+        Log::info('Admin SubSectionController@destroy hit', [
+            'courseId' => $course->id,
+            'sectionId' => $section->id,
+            'subSectionId' => $subSection->id,
+        ]);
 
         $lessonsCount = $this->subSectionDeleteSummary($subSection);
         $subSection->delete();
@@ -71,7 +77,9 @@ class SubSectionController extends Controller
         }
         $message .= '.';
 
-        return back()->with('success', $message);
+        return redirect()
+            ->route('admin.courses.show', $course)
+            ->with('success', $message);
     }
 
     public function move(Request $request, Course $course, Section $section, SubSection $subSection): RedirectResponse
