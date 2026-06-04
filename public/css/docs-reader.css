@@ -111,28 +111,48 @@ html.docs-theme-dark {
     line-height: 1;
 }
 
-.docs-course-drawer-state {
-    position: fixed;
-    opacity: 0;
-    width: 1px;
-    height: 1px;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    clip: rect(0, 0, 0, 0);
-    overflow: hidden;
-    white-space: nowrap;
-    pointer-events: none;
-    appearance: none;
-    -webkit-appearance: none;
-}
-
-.docs-drawer-toggle-btn {
+/* Burger menu (mobile) */
+.docs-burger-btn {
     display: none;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--viewer-border);
+    border-radius: var(--viewer-radius-sm);
+    background: var(--viewer-surface);
+    color: var(--viewer-text);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
-    cursor: pointer;
-    user-select: none;
+    flex-shrink: 0;
+}
+
+.docs-burger-btn:hover {
+    background: var(--viewer-hover);
+}
+
+.docs-burger-icon {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    width: 18px;
+    height: 14px;
+}
+
+.docs-burger-line {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: var(--viewer-text);
+    border-radius: 1px;
+}
+
+.docs-burger-label {
+    white-space: nowrap;
 }
 
 .docs-topbar-course {
@@ -189,10 +209,6 @@ html.docs-theme-dark {
 
 .docs-icon-btn:hover {
     background: var(--viewer-hover);
-}
-
-.docs-drawer-label {
-    font-size: 0.8125rem;
 }
 
 /* Layout */
@@ -1090,18 +1106,116 @@ html.docs-theme-dark {
     }
 }
 
-/* Mobile drawer (CSS-only via checkbox — no JS required) */
-.docs-drawer-backdrop {
+/* Mobile course menu popup (<dialog>) */
+.docs-course-menu {
+    border: none;
+    padding: 0;
+    margin: 0;
+    max-width: none;
+    max-height: none;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    overflow: hidden;
+}
+
+.docs-course-menu:not([open]):not(.is-open) {
+    display: none;
+}
+
+.docs-course-menu[open],
+.docs-course-menu.is-open {
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+}
+
+.docs-course-menu.is-open {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.45);
-    z-index: 64;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.25s ease, visibility 0.25s;
-    pointer-events: none;
-    cursor: pointer;
+    z-index: 100;
+    background: rgba(15, 23, 42, 0.55);
+}
+
+.docs-course-menu::backdrop {
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(2px);
+}
+
+.docs-course-menu-sheet {
+    display: flex;
+    flex-direction: column;
+    width: min(360px, 100vw);
+    max-width: 92vw;
+    height: 100%;
+    background: var(--viewer-surface);
+    box-shadow: -12px 0 40px rgba(15, 23, 42, 0.18);
+    animation: docs-menu-slide-in 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes docs-menu-slide-in {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+.docs-course-menu-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 1rem 1rem 0.75rem;
+    border-bottom: 1px solid var(--viewer-border);
+    flex-shrink: 0;
+}
+
+.docs-course-menu-title {
     margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--viewer-text);
+}
+
+.docs-course-menu-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--viewer-border);
+    border-radius: var(--viewer-radius-sm);
+    background: var(--viewer-surface);
+    color: var(--viewer-muted);
+    cursor: pointer;
+    touch-action: manipulation;
+    flex-shrink: 0;
+}
+
+.docs-course-menu-close:hover {
+    background: var(--viewer-hover);
+    color: var(--viewer-text);
+}
+
+.docs-course-menu-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.docs-course-menu-body .course-sidebar {
+    max-height: none;
+    height: auto;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+body.docs-menu-open {
+    overflow: hidden;
 }
 
 @media (max-width: 1023px) {
@@ -1109,87 +1223,12 @@ html.docs-theme-dark {
         grid-template-columns: 1fr;
     }
 
-    .docs-drawer-toggle-btn {
-        display: inline-flex !important;
-        position: relative;
-        z-index: 61;
-    }
-
-    .docs-topbar {
-        z-index: 60;
-    }
-
-    .docs-drawer-backdrop {
-        display: block;
-    }
-
-    .docs-course-sidebar-panel {
-        position: fixed;
-        top: 0;
-        right: 0;
-        left: auto;
-        bottom: 0;
-        width: min(320px, 92vw);
-        max-height: none;
-        z-index: 65;
-        padding: 0;
-        transform: translate3d(100%, 0, 0);
-        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.28s;
-        visibility: hidden;
-        pointer-events: none;
-        will-change: transform;
-    }
-
-    body:has(#docs-course-drawer-toggle:checked) .docs-drawer-backdrop {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-    }
-
-    body:has(#docs-course-drawer-toggle:checked) .docs-course-sidebar-panel {
-        transform: translate3d(0, 0, 0);
-        visibility: visible;
-        pointer-events: auto;
-    }
-
-    body:has(#docs-course-drawer-toggle:checked),
-    body.docs-drawer-legacy-open {
-        overflow: hidden;
-    }
-
-    body.docs-drawer-legacy-open .docs-drawer-backdrop {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-    }
-
-    body.docs-drawer-legacy-open .docs-course-sidebar-panel {
-        transform: translate3d(0, 0, 0);
-        visibility: visible;
-        pointer-events: auto;
-    }
-
-    .course-sidebar-header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 0.5rem;
-    }
-
-    .course-sidebar-header-main {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .docs-drawer-close {
+    .docs-burger-btn {
         display: inline-flex;
     }
 
-    .course-sidebar {
-        max-height: 100vh;
-        border-radius: 0;
-        border: none;
-        height: 100%;
+    .docs-sidebar-desktop {
+        display: none !important;
     }
 
     .lesson-view-grid {
@@ -1209,33 +1248,16 @@ html.docs-theme-dark {
     }
 }
 
-.docs-drawer-close {
-    display: none;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    margin-top: 0.15rem;
-    border: 1px solid var(--viewer-border);
-    border-radius: var(--viewer-radius-sm);
-    background: var(--viewer-surface);
-    color: var(--viewer-muted);
-    cursor: pointer;
-    touch-action: manipulation;
-}
-
-.docs-drawer-close:hover {
-    background: var(--viewer-hover);
-    color: var(--viewer-text);
-}
-
 @media (min-width: 1024px) {
     .lesson-toc-mobile {
         display: none;
     }
 
-    .docs-drawer-toggle-btn {
+    .docs-burger-btn {
+        display: none !important;
+    }
+
+    .docs-course-menu {
         display: none !important;
     }
 }

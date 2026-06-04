@@ -17,30 +17,6 @@
         updateScroll();
     }
 
-    /* Mobile drawer: close when picking a lesson (checkbox drawer) */
-    const drawerCheckbox = document.getElementById('docs-course-drawer-toggle');
-    if (drawerCheckbox) {
-        document.querySelectorAll('.course-sidebar a').forEach(function (link) {
-            link.addEventListener('click', function () {
-                if (window.matchMedia('(max-width: 1023px)').matches) {
-                    drawerCheckbox.checked = false;
-                }
-            });
-        });
-
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && drawerCheckbox.checked) {
-                drawerCheckbox.checked = false;
-            }
-        });
-
-        window.addEventListener('resize', function () {
-            if (!window.matchMedia('(max-width: 1023px)').matches) {
-                drawerCheckbox.checked = false;
-            }
-        });
-    }
-
     /* Scroll active lesson into view in sidebar */
     const activeLesson = document.querySelector('.course-sidebar-lesson.is-active');
     if (activeLesson) {

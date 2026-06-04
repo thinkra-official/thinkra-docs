@@ -25,10 +25,6 @@
     @stack('head')
 </head>
 <body class="docs-shell">
-    @isset($sections)
-    <input type="checkbox" id="docs-course-drawer-toggle" class="docs-course-drawer-state" aria-hidden="true" tabindex="-1">
-    @endisset
-
     @if(!empty($preview) && $preview)
     <div class="docs-preview-banner" role="status">وضع المعاينة — المحتوى قد يتضمن مسودات غير منشورة</div>
     @endif
@@ -41,10 +37,19 @@
         <div class="docs-topbar-inner">
             <div class="docs-topbar-start">
                 @isset($sections)
-                <label for="docs-course-drawer-toggle" class="docs-icon-btn docs-drawer-toggle-btn" role="button" aria-controls="docs-sidebar-panel">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                    <span class="docs-drawer-label">محتوى الدورة</span>
-                </label>
+                <button type="button"
+                        id="docs-burger-open"
+                        class="docs-burger-btn"
+                        aria-haspopup="dialog"
+                        aria-controls="docs-course-menu"
+                        aria-expanded="false">
+                    <span class="docs-burger-icon" aria-hidden="true">
+                        <span class="docs-burger-line"></span>
+                        <span class="docs-burger-line"></span>
+                        <span class="docs-burger-line"></span>
+                    </span>
+                    <span class="docs-burger-label">محتوى الدورة</span>
+                </button>
                 @endisset
                 <a href="{{ route('docs.search') }}" class="docs-brand" aria-label="THINKRA">
                     <x-application-logo />
@@ -64,13 +69,9 @@
         </div>
     </header>
 
-    @isset($sections)
-    <label for="docs-course-drawer-toggle" class="docs-drawer-backdrop" aria-hidden="true"></label>
-    @endisset
-
     <div class="docs-viewer-layout @unless(isset($sections)) docs-viewer-layout--standalone @endunless">
         @isset($sections)
-        <aside id="docs-sidebar-panel" class="docs-course-sidebar-panel" aria-label="محتوى الدورة">
+        <aside id="docs-sidebar-panel" class="docs-course-sidebar-panel docs-sidebar-desktop" aria-label="محتوى الدورة">
             @include('docs.partials.course-sidebar', [
                 'course' => $course,
                 'sections' => $sections,
@@ -88,6 +89,19 @@
             @yield('content')
         </main>
     </div>
+
+    @isset($sections)
+    @include('docs.partials.course-menu-modal', [
+        'course' => $course,
+        'sections' => $sections,
+        'currentLesson' => $currentLesson ?? null,
+        'preview' => $preview ?? false,
+        'progressStats' => $progressStats ?? null,
+        'completedLessonIds' => $progressStats['completedIds'] ?? [],
+        'expandedSections' => $expandedSections ?? [],
+        'expandedSubSections' => $expandedSubSections ?? [],
+    ])
+    @endisset
 
     @isset($course)
     @php
@@ -107,20 +121,6 @@
     @endisset
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
     <script src="{{ asset('js/docs-reader.js') }}" defer></script>
-    @isset($sections)
-    <script>
-        (function () {
-            if (window.CSS && CSS.supports && CSS.supports('selector(:has(*))')) return;
-            var cb = document.getElementById('docs-course-drawer-toggle');
-            if (!cb) return;
-            function sync() {
-                document.body.classList.toggle('docs-drawer-legacy-open', cb.checked);
-            }
-            cb.addEventListener('change', sync);
-            sync();
-        })();
-    </script>
-    @endisset
     @stack('scripts')
 </body>
 </html>
