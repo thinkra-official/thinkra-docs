@@ -73,15 +73,24 @@ class SectionLessonController extends Controller
             ->with('success', "تم حذف الدرس «{$title}».");
     }
 
-    public function move(Request $request, Course $course, Section $section, Lesson $lesson): RedirectResponse
+    public function move(Request $request, int|string $courseId, int|string $sectionId, int|string $lessonId): RedirectResponse
     {
-        $this->ensureSectionInCourse($course, $section);
+        Log::info('Admin SectionLessonController@move hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'lessonId' => $lessonId,
+            'direction' => $request->input('direction'),
+        ]);
+
+        [$course, $section, $lesson] = $this->resolveDirectSectionLesson($courseId, $sectionId, $lessonId);
         $this->assertLessonBelongsToSection($lesson, $section);
 
         $direction = $request->validate(['direction' => ['required', 'in:up,down']])['direction'];
 
         $moved = $this->moveSortOrder($section->directLessons(), $lesson, $direction);
 
-        return back()->with('success', $moved ? 'تم تحديث ترتيب الدرس.' : 'لا يمكن نقل الدرس أكثر.');
+        return redirect()
+            ->route('admin.courses.show', $course->id)
+            ->with('success', $moved ? 'تم تحديث ترتيب الدرس.' : 'لا يمكن نقل الدرس أكثر.');
     }
 }

@@ -53,8 +53,11 @@ class NestedRouteBindingTest extends TestCase
         $section2 = $course->sections()->create(['title' => 'Section B', 'sort_order' => 2]);
 
         $this->actingAs($teacher)
-            ->patch(route('teacher.sections.move', [$course, $section2]), ['direction' => 'up'])
-            ->assertRedirect()
+            ->patch(route('teacher.sections.move', [
+                'courseId' => $course->id,
+                'sectionId' => $section2->id,
+            ]), ['direction' => 'up'])
+            ->assertRedirect(route('teacher.courses.show', $course->id))
             ->assertSessionHas('success');
 
         $this->assertEquals(1, $section2->fresh()->sort_order);
@@ -68,8 +71,12 @@ class NestedRouteBindingTest extends TestCase
         $subSection2 = $section->subSections()->create(['title' => 'Sub B', 'sort_order' => 2]);
 
         $this->actingAs($teacher)
-            ->patch(route('teacher.sub-sections.move', [$course, $section, $subSection2]), ['direction' => 'up'])
-            ->assertRedirect()
+            ->patch(route('teacher.sub-sections.move', [
+                'courseId' => $course->id,
+                'sectionId' => $section->id,
+                'subSectionId' => $subSection2->id,
+            ]), ['direction' => 'up'])
+            ->assertRedirect(route('teacher.courses.show', $course->id))
             ->assertSessionHas('success');
 
         $this->assertEquals(1, $subSection2->fresh()->sort_order);
@@ -87,12 +94,12 @@ class NestedRouteBindingTest extends TestCase
 
         $this->actingAs($data['teacher'])
             ->patch(route('teacher.lessons.move', [
-                $data['course'],
-                $data['section'],
-                $data['subSection'],
-                $lesson2,
+                'courseId' => $data['course']->id,
+                'sectionId' => $data['section']->id,
+                'subSectionId' => $data['subSection']->id,
+                'lessonId' => $lesson2->id,
             ]), ['direction' => 'up'])
-            ->assertRedirect()
+            ->assertRedirect(route('teacher.courses.show', $data['course']->id))
             ->assertSessionHas('success');
 
         $this->assertEquals(1, $lesson2->fresh()->sort_order);
@@ -106,8 +113,11 @@ class NestedRouteBindingTest extends TestCase
         $section2 = $course->sections()->create(['title' => 'Section B', 'sort_order' => 2]);
 
         $this->actingAs($admin)
-            ->patch(route('admin.courses.sections.move', [$course, $section2]), ['direction' => 'up'])
-            ->assertRedirect()
+            ->patch(route('admin.courses.sections.move', [
+                'courseId' => $course->id,
+                'sectionId' => $section2->id,
+            ]), ['direction' => 'up'])
+            ->assertRedirect(route('admin.courses.show', $course->id))
             ->assertSessionHas('success');
     }
 
@@ -182,11 +192,11 @@ class NestedRouteBindingTest extends TestCase
 
         $this->actingAs($data['teacher'])
             ->patch(route('teacher.section-lessons.move', [
-                $data['course'],
-                $data['section'],
-                $lesson2,
+                'courseId' => $data['course']->id,
+                'sectionId' => $data['section']->id,
+                'lessonId' => $lesson2->id,
             ]), ['direction' => 'up'])
-            ->assertRedirect()
+            ->assertRedirect(route('teacher.courses.show', $data['course']->id))
             ->assertSessionHas('success');
 
         $this->assertEquals(1, $lesson2->fresh()->sort_order);
@@ -219,7 +229,10 @@ class NestedRouteBindingTest extends TestCase
         $otherCourse->members()->attach($teacher->id, ['role' => CourseMemberRole::Owner->value]);
 
         $this->actingAs($teacher)
-            ->patch(route('teacher.sections.move', [$otherCourse, $section]), ['direction' => 'up'])
+            ->patch(route('teacher.sections.move', [
+                'courseId' => $otherCourse->id,
+                'sectionId' => $section->id,
+            ]), ['direction' => 'up'])
             ->assertNotFound();
     }
 }

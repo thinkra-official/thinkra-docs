@@ -89,17 +89,27 @@ class SubSectionController extends Controller
             ->with('success', 'تم حذف القسم الفرعي بنجاح');
     }
 
-    public function move(Request $request, Course $course, Section $section, SubSection $subSection): RedirectResponse
+    public function move(Request $request, int|string $courseId, int|string $sectionId, int|string $subSectionId): RedirectResponse
     {
+        Log::info('Teacher SubSectionController@move hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'subSectionId' => $subSectionId,
+            'direction' => $request->input('direction'),
+        ]);
+
+        [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
+        $subSection = $this->resolveSubSectionInSection($section, $subSectionId);
+
         $this->ensureCourseAccess($course);
-        abort_unless($section->course_id === $course->id, 404);
-        abort_unless($subSection->section_id === $section->id, 404);
         $this->authorize('manage', $course);
 
         $direction = $request->validate(['direction' => ['required', 'in:up,down']])['direction'];
 
         $moved = $this->moveSortOrder($section->subSections(), $subSection, $direction);
 
-        return back()->with('success', $moved ? 'تم تحديث ترتيب الصب قسم.' : 'لا يمكن نقل الصب قسم أكثر.');
+        return redirect()
+            ->route('teacher.courses.show', $course->id)
+            ->with('success', $moved ? 'تم تحديث ترتيب الصب قسم.' : 'لا يمكن نقل الصب قسم أكثر.');
     }
 }

@@ -82,6 +82,10 @@
         ? route('teacher.sections.destroy', ['courseId' => $course->id, 'sectionId' => $section->id])
         : route('admin.courses.sections.destroy', ['courseId' => $course->id, 'sectionId' => $section->id]);
 
+    $sectionMoveUrl = $isTeacher
+        ? route('teacher.sections.move', ['courseId' => $course->id, 'sectionId' => $section->id])
+        : route('admin.courses.sections.move', ['courseId' => $course->id, 'sectionId' => $section->id]);
+
 @endphp
 
 <div class="thinkra-card mb-6 overflow-hidden" x-data="{ openSub: false, editSection: false }">
@@ -94,24 +98,22 @@
 
             <div class="flex flex-col gap-0.5 shrink-0">
 
-                <form method="POST" action="{{ $route('sections.move', ['course' => $course, 'section' => $section]) }}" class="inline">
-
-                    @csrf @method('PATCH')
-
+                <!-- move action: {{ $sectionMoveUrl }} -->
+                <form method="POST" action="{{ $sectionMoveUrl }}" class="inline">
+                    @csrf
+                    @method('PATCH')
+                    <input type="hidden" name="_method" value="PATCH">
                     <input type="hidden" name="direction" value="up">
-
                     <button type="submit" class="w-7 h-6 rounded border border-slate-200 text-xs hover:bg-white" title="أعلى">↑</button>
-
                 </form>
 
-                <form method="POST" action="{{ $route('sections.move', ['course' => $course, 'section' => $section]) }}" class="inline">
-
-                    @csrf @method('PATCH')
-
+                <!-- move action: {{ $sectionMoveUrl }} -->
+                <form method="POST" action="{{ $sectionMoveUrl }}" class="inline">
+                    @csrf
+                    @method('PATCH')
+                    <input type="hidden" name="_method" value="PATCH">
                     <input type="hidden" name="direction" value="down">
-
                     <button type="submit" class="w-7 h-6 rounded border border-slate-200 text-xs hover:bg-white" title="أسفل">↓</button>
-
                 </form>
 
             </div>
@@ -209,24 +211,35 @@
 
                 <div class="flex flex-col gap-0.5 shrink-0">
 
-                    <form method="POST" action="{{ $routeSectionLesson('move', ['course' => $course, 'section' => $section, 'lesson' => $lesson]) }}" class="inline">
-
-                        @csrf @method('PATCH')
-
+                    @php
+                        $lessonMoveUrl = $isTeacher
+                            ? route('teacher.section-lessons.move', [
+                                'courseId' => $course->id,
+                                'sectionId' => $section->id,
+                                'lessonId' => $lesson->id,
+                            ])
+                            : route('admin.courses.section-lessons.move', [
+                                'courseId' => $course->id,
+                                'sectionId' => $section->id,
+                                'lessonId' => $lesson->id,
+                            ]);
+                    @endphp
+                    <!-- move action: {{ $lessonMoveUrl }} -->
+                    <form method="POST" action="{{ $lessonMoveUrl }}" class="inline">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="_method" value="PATCH">
                         <input type="hidden" name="direction" value="up">
-
                         <button type="submit" class="w-7 h-6 rounded border border-slate-200 text-xs hover:bg-white">↑</button>
-
                     </form>
 
-                    <form method="POST" action="{{ $routeSectionLesson('move', ['course' => $course, 'section' => $section, 'lesson' => $lesson]) }}" class="inline">
-
-                        @csrf @method('PATCH')
-
+                    <!-- move action: {{ $lessonMoveUrl }} -->
+                    <form method="POST" action="{{ $lessonMoveUrl }}" class="inline">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="_method" value="PATCH">
                         <input type="hidden" name="direction" value="down">
-
                         <button type="submit" class="w-7 h-6 rounded border border-slate-200 text-xs hover:bg-white">↓</button>
-
                     </form>
 
                 </div>
@@ -301,6 +314,18 @@
                 'subSectionId' => $subSection->id,
             ]);
 
+        $subSectionMoveUrl = $isTeacher
+            ? route('teacher.sub-sections.move', [
+                'courseId' => $course->id,
+                'sectionId' => $section->id,
+                'subSectionId' => $subSection->id,
+            ])
+            : route('admin.courses.sub-sections.move', [
+                'courseId' => $course->id,
+                'sectionId' => $section->id,
+                'subSectionId' => $subSection->id,
+            ]);
+
     @endphp
 
     <div class="border-t border-slate-100" x-data="{ editSub: false }">
@@ -313,24 +338,22 @@
 
                 <div class="flex flex-col gap-0.5 shrink-0">
 
-                    <form method="POST" action="{{ $route('sub-sections.move', ['course' => $course, 'section' => $section, 'subSection' => $subSection]) }}" class="inline">
-
-                        @csrf @method('PATCH')
-
+                    <!-- move action: {{ $subSectionMoveUrl }} -->
+                    <form method="POST" action="{{ $subSectionMoveUrl }}" class="inline">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="_method" value="PATCH">
                         <input type="hidden" name="direction" value="up">
-
                         <button type="submit" class="w-7 h-6 rounded border border-slate-200 text-xs hover:bg-white">↑</button>
-
                     </form>
 
-                    <form method="POST" action="{{ $route('sub-sections.move', ['course' => $course, 'section' => $section, 'subSection' => $subSection]) }}" class="inline">
-
-                        @csrf @method('PATCH')
-
+                    <!-- move action: {{ $subSectionMoveUrl }} -->
+                    <form method="POST" action="{{ $subSectionMoveUrl }}" class="inline">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="_method" value="PATCH">
                         <input type="hidden" name="direction" value="down">
-
                         <button type="submit" class="w-7 h-6 rounded border border-slate-200 text-xs hover:bg-white">↓</button>
-
                     </form>
 
                 </div>
@@ -413,24 +436,37 @@
 
                     <div class="flex flex-col gap-0.5 shrink-0">
 
-                        <form method="POST" action="{{ $routeSubLesson('move', ['course' => $course, 'section' => $section, 'subSection' => $subSection, 'lesson' => $lesson]) }}" class="inline">
-
-                            @csrf @method('PATCH')
-
+                        @php
+                            $lessonMoveUrl = $isTeacher
+                                ? route('teacher.lessons.move', [
+                                    'courseId' => $course->id,
+                                    'sectionId' => $section->id,
+                                    'subSectionId' => $subSection->id,
+                                    'lessonId' => $lesson->id,
+                                ])
+                                : route('admin.courses.lessons.move', [
+                                    'courseId' => $course->id,
+                                    'sectionId' => $section->id,
+                                    'subSectionId' => $subSection->id,
+                                    'lessonId' => $lesson->id,
+                                ]);
+                        @endphp
+                        <!-- move action: {{ $lessonMoveUrl }} -->
+                        <form method="POST" action="{{ $lessonMoveUrl }}" class="inline">
+                            @csrf
+                            @method('PATCH')
+                            <input type="hidden" name="_method" value="PATCH">
                             <input type="hidden" name="direction" value="up">
-
                             <button type="submit" class="w-7 h-6 rounded border border-slate-200 text-xs hover:bg-white">↑</button>
-
                         </form>
 
-                        <form method="POST" action="{{ $routeSubLesson('move', ['course' => $course, 'section' => $section, 'subSection' => $subSection, 'lesson' => $lesson]) }}" class="inline">
-
-                            @csrf @method('PATCH')
-
+                        <!-- move action: {{ $lessonMoveUrl }} -->
+                        <form method="POST" action="{{ $lessonMoveUrl }}" class="inline">
+                            @csrf
+                            @method('PATCH')
+                            <input type="hidden" name="_method" value="PATCH">
                             <input type="hidden" name="direction" value="down">
-
                             <button type="submit" class="w-7 h-6 rounded border border-slate-200 text-xs hover:bg-white">↓</button>
-
                         </form>
 
                     </div>

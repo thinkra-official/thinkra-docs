@@ -100,20 +100,24 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->name('courses.lessons.destroy');
         Route::delete('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}', [AdminSectionLessonController::class, 'destroy'])
             ->name('courses.section-lessons.destroy');
+        Route::patch('courses/{courseId}/sections/{sectionId}/move', [AdminSectionController::class, 'move'])
+            ->name('courses.sections.move');
+        Route::patch('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}/move', [AdminSectionLessonController::class, 'move'])
+            ->name('courses.section-lessons.move');
+        Route::patch('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/move', [AdminSubSectionController::class, 'move'])
+            ->name('courses.sub-sections.move');
+        Route::patch('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons/{lessonId}/move', [AdminLessonController::class, 'move'])
+            ->name('courses.lessons.move');
 
         Route::prefix('courses/{course}')->name('courses.')->scopeBindings()->group(function () {
             Route::post('sections', [AdminSectionController::class, 'store'])->name('sections.store');
             Route::put('sections/{section}', [AdminSectionController::class, 'update'])->name('sections.update');
-            Route::patch('sections/{section}/move', [AdminSectionController::class, 'move'])->name('sections.move');
 
             Route::get('sections/{section}/lessons/{lesson}', [AdminSectionLessonController::class, 'show'])->name('section-lessons.show');
-            Route::patch('sections/{section}/lessons/{lesson}/move', [AdminSectionLessonController::class, 'move'])->name('section-lessons.move');
 
             Route::put('sections/{section}/sub-sections/{subSection}', [AdminSubSectionController::class, 'update'])->name('sub-sections.update');
-            Route::patch('sections/{section}/sub-sections/{subSection}/move', [AdminSubSectionController::class, 'move'])->name('sub-sections.move');
 
             Route::get('sections/{section}/sub-sections/{subSection}/lessons/{lesson}', [AdminLessonController::class, 'show'])->name('lessons.show');
-            Route::patch('sections/{section}/sub-sections/{subSection}/lessons/{lesson}/move', [AdminLessonController::class, 'move'])->name('lessons.move');
         });
     });
 });
@@ -138,29 +142,33 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
         ->name('lessons.destroy');
     Route::delete('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}', [TeacherSectionLessonController::class, 'destroy'])
         ->name('section-lessons.destroy');
+    Route::patch('courses/{courseId}/sections/{sectionId}/move', [SectionController::class, 'move'])
+        ->name('sections.move');
+    Route::patch('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}/move', [TeacherSectionLessonController::class, 'move'])
+        ->name('section-lessons.move');
+    Route::patch('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/move', [SubSectionController::class, 'move'])
+        ->name('sub-sections.move');
+    Route::patch('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons/{lessonId}/move', [LessonController::class, 'move'])
+        ->name('lessons.move');
 
     Route::prefix('courses/{course}')->scopeBindings()->group(function () {
         Route::get('/', [TeacherCourseController::class, 'show'])->name('courses.show');
 
         Route::post('sections', [SectionController::class, 'store'])->name('sections.store');
         Route::put('sections/{section}', [SectionController::class, 'update'])->name('sections.update');
-        Route::patch('sections/{section}/move', [SectionController::class, 'move'])->name('sections.move');
 
         Route::get('sections/{section}/lessons/{lesson}/edit', [TeacherSectionLessonController::class, 'edit'])->name('section-lessons.edit');
         Route::put('sections/{section}/lessons/{lesson}', [TeacherSectionLessonController::class, 'update'])->name('section-lessons.update');
         Route::patch('sections/{section}/lessons/{lesson}/status', [TeacherSectionLessonController::class, 'updateStatus'])->name('section-lessons.status');
-        Route::patch('sections/{section}/lessons/{lesson}/move', [TeacherSectionLessonController::class, 'move'])->name('section-lessons.move');
         Route::post('sections/{section}/lessons/{lesson}/autosave', [LessonContentController::class, 'autosaveSection'])->name('section-lessons.autosave');
         Route::get('sections/{section}/lessons/{lesson}/versions/{version}', [LessonContentController::class, 'showVersionSection'])->name('section-lessons.versions.show');
         Route::post('sections/{section}/lessons/{lesson}/versions/{version}/restore', [LessonContentController::class, 'restoreSection'])->name('section-lessons.versions.restore');
 
         Route::put('sections/{section}/sub-sections/{subSection}', [SubSectionController::class, 'update'])->name('sub-sections.update');
-        Route::patch('sections/{section}/sub-sections/{subSection}/move', [SubSectionController::class, 'move'])->name('sub-sections.move');
 
         Route::get('sections/{section}/sub-sections/{subSection}/lessons/{lesson}/edit', [LessonController::class, 'edit'])->name('lessons.edit');
         Route::put('sections/{section}/sub-sections/{subSection}/lessons/{lesson}', [LessonController::class, 'update'])->name('lessons.update');
         Route::patch('sections/{section}/sub-sections/{subSection}/lessons/{lesson}/status', [LessonController::class, 'updateStatus'])->name('lessons.status');
-        Route::patch('sections/{section}/sub-sections/{subSection}/lessons/{lesson}/move', [LessonController::class, 'move'])->name('lessons.move');
 
         Route::post('sections/{section}/sub-sections/{subSection}/lessons/{lesson}/autosave', [LessonContentController::class, 'autosave'])->name('lessons.autosave');
         Route::get('sections/{section}/sub-sections/{subSection}/lessons/{lesson}/versions/{version}', [LessonContentController::class, 'showVersion'])->name('lessons.versions.show');

@@ -93,16 +93,25 @@ class SectionController extends Controller
             ->with('success', $message);
     }
 
-    public function move(Request $request, Course $course, Section $section): RedirectResponse
+    public function move(Request $request, int|string $courseId, int|string $sectionId): RedirectResponse
     {
+        Log::info('Teacher SectionController@move hit', [
+            'courseId' => $courseId,
+            'sectionId' => $sectionId,
+            'direction' => $request->input('direction'),
+        ]);
+
+        [$course, $section] = $this->resolveCourseAndSection($courseId, $sectionId);
+
         $this->ensureCourseAccess($course);
-        abort_unless($section->course_id === $course->id, 404);
         $this->authorize('manage', $course);
 
         $direction = $request->validate(['direction' => ['required', 'in:up,down']])['direction'];
 
         $moved = $this->moveSortOrder($course->sections(), $section, $direction);
 
-        return back()->with('success', $moved ? 'تم تحديث ترتيب الفصل.' : 'لا يمكن نقل الفصل أكثر.');
+        return redirect()
+            ->route('teacher.courses.show', $course->id)
+            ->with('success', $moved ? 'تم تحديث ترتيب الفصل.' : 'لا يمكن نقل الفصل أكثر.');
     }
 }

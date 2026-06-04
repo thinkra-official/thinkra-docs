@@ -134,10 +134,13 @@ class StabilityTest extends TestCase
             ->assertSessionHas('success');
 
         $this->actingAs($data['teacher'])
-            ->patch(route('teacher.sections.move', NestedCourseRoute::section($course, $section2)), [
+            ->patch(route('teacher.sections.move', [
+                'courseId' => $course->id,
+                'sectionId' => $section2->id,
+            ]), [
                 'direction' => 'up',
             ])
-            ->assertRedirect()
+            ->assertRedirect(route('teacher.courses.show', $course->id))
             ->assertSessionHas('success');
 
         $this->actingAs($data['teacher'])
@@ -172,10 +175,14 @@ class StabilityTest extends TestCase
         $sub2->update(['sort_order' => 2]);
 
         $this->actingAs($data['teacher'])
-            ->patch(route('teacher.sub-sections.move', NestedCourseRoute::subSection($data['course'], $data['section'], $sub2)), [
+            ->patch(route('teacher.sub-sections.move', [
+                'courseId' => $data['course']->id,
+                'sectionId' => $data['section']->id,
+                'subSectionId' => $sub2->id,
+            ]), [
                 'direction' => 'up',
             ])
-            ->assertRedirect()
+            ->assertRedirect(route('teacher.courses.show', $data['course']->id))
             ->assertSessionHas('success');
     }
 
