@@ -30,6 +30,12 @@
 
         : fn ($course, $section, $sub, $lesson) => route('admin.courses.lessons.show', NestedCourseRoute::subSectionLesson($course, $section, $sub, $lesson));
 
+    $canReorder = $canManage || $canEditContent;
+
+    $structureReorderUrl = $isTeacher
+        ? route('teacher.courses.structure.reorder', ['courseId' => $course->id])
+        : route('admin.courses.structure.reorder', ['courseId' => $course->id]);
+
 @endphp
 
 
@@ -54,7 +60,22 @@
 
 @endif
 
+@if($canReorder)
+<div id="course-structure-reorder"
+     data-enabled="1"
+     data-can-manage="{{ $canManage ? '1' : '0' }}"
+     data-can-edit="{{ $canEditContent ? '1' : '0' }}"
+     data-reorder-url="{{ $structureReorderUrl }}"
+     class="mb-4">
+    <div id="structure-reorder-status"
+         class="hidden mb-3 rounded-xl border px-4 py-2 text-sm shadow-sm"
+         role="status"
+         aria-live="polite"></div>
+    <p class="text-xs text-slate-500 mb-3">اسحب من أيقونة ⋮⋮ لإعادة الترتيب. يمكنك أيضاً استخدام أزرار ↑↓.</p>
+</div>
+@endif
 
+<ul id="course-sections-sortable" class="list-none p-0 m-0 space-y-0">
 
 @foreach($course->sections as $section)
 
@@ -88,15 +109,21 @@
 
 @endphp
 
-<div class="thinkra-card mb-6 overflow-hidden" x-data="{ openSub: false, editSection: false }">
+<li class="thinkra-card mb-6 overflow-hidden list-none" data-section-id="{{ $section->id }}" data-type="section">
+
+    <div data-section-root data-section-id="{{ $section->id }}" x-data="{ openSub: false, editSection: false }">
 
     <div class="bg-thinkra-navy/5 px-4 py-3 flex flex-wrap justify-between items-center gap-2 border-b">
 
         <div class="flex items-center gap-2 min-w-0 flex-1">
 
+            @if($canReorder && $canManage)
+            @include('courses.partials._drag-handle', ['type' => 'section'])
+            @endif
+
             @if($canManage)
 
-            <div class="flex flex-col gap-0.5 shrink-0">
+            <div class="flex flex-col gap-0.5 shrink-0 hidden sm:flex" title="ترتيب يدوي">
 
                 <!-- move action: {{ $sectionMoveUrl }} -->
                 <form method="POST" action="{{ $sectionMoveUrl }}" class="inline">
@@ -199,17 +226,25 @@
 
 
 
-    <ul class="divide-y">
+    <ul class="direct-lessons-sortable sortable-lessons divide-y min-h-[2.5rem]"
+        data-section-id="{{ $section->id }}"
+        data-lesson-container="direct">
 
         @foreach($section->directLessons as $lesson)
 
-        <li class="px-4 py-3 flex flex-wrap justify-between items-center gap-2 text-sm">
+        <li class="px-4 py-3 flex flex-wrap justify-between items-center gap-2 text-sm"
+            data-lesson-id="{{ $lesson->id }}"
+            data-type="lesson">
 
             <div class="flex items-center gap-2 min-w-0 flex-1">
 
+                @if($canReorder && $canEditContent)
+                @include('courses.partials._drag-handle', ['type' => 'lesson'])
+                @endif
+
                 @if($canEditContent)
 
-                <div class="flex flex-col gap-0.5 shrink-0">
+                <div class="flex flex-col gap-0.5 shrink-0 hidden sm:flex" title="ترتيب يدوي">
 
                     @php
                         $lessonMoveUrl = $isTeacher
@@ -292,7 +327,8 @@
 
     </ul>
 
-
+    <ul class="subsections-sortable list-none p-0 m-0"
+        data-section-id="{{ $section->id }}">
 
     @foreach($section->subSections as $subSection)
 
@@ -328,15 +364,22 @@
 
     @endphp
 
-    <div class="border-t border-slate-100" x-data="{ editSub: false }">
+    <li class="border-t border-slate-100 list-none"
+        data-sub-section-id="{{ $subSection->id }}"
+        data-type="sub-section"
+        x-data="{ editSub: false }">
 
         <div class="px-4 py-2.5 bg-amber-50/50 flex flex-wrap justify-between items-center gap-2">
 
             <div class="flex items-center gap-2 min-w-0 flex-1">
 
+                @if($canReorder && $canManage)
+                @include('courses.partials._drag-handle', ['type' => 'subsection'])
+                @endif
+
                 @if($canManage)
 
-                <div class="flex flex-col gap-0.5 shrink-0">
+                <div class="flex flex-col gap-0.5 shrink-0 hidden sm:flex" title="ترتيب يدوي">
 
                     <!-- move action: {{ $subSectionMoveUrl }} -->
                     <form method="POST" action="{{ $subSectionMoveUrl }}" class="inline">
@@ -424,17 +467,26 @@
 
 
 
-        <ul class="divide-y mr-4 border-r-2 border-amber-200/60">
+        <ul class="sub-lessons-sortable sortable-lessons divide-y mr-4 border-r-2 border-amber-200/60 min-h-[2.5rem]"
+            data-section-id="{{ $section->id }}"
+            data-sub-section-id="{{ $subSection->id }}"
+            data-lesson-container="sub-section">
 
             @forelse($subSection->lessons as $lesson)
 
-            <li class="px-4 py-3 flex flex-wrap justify-between items-center gap-2 text-sm">
+            <li class="px-4 py-3 flex flex-wrap justify-between items-center gap-2 text-sm"
+                data-lesson-id="{{ $lesson->id }}"
+                data-type="lesson">
 
                 <div class="flex items-center gap-2 min-w-0 flex-1">
 
+                    @if($canReorder && $canEditContent)
+                    @include('courses.partials._drag-handle', ['type' => 'lesson'])
+                    @endif
+
                     @if($canEditContent)
 
-                    <div class="flex flex-col gap-0.5 shrink-0">
+                    <div class="flex flex-col gap-0.5 shrink-0 hidden sm:flex" title="ترتيب يدوي">
 
                         @php
                             $lessonMoveUrl = $isTeacher
@@ -525,9 +577,11 @@
 
         </ul>
 
-    </div>
+    </li>
 
     @endforeach
+
+    </ul>
 
 
 
@@ -537,9 +591,13 @@
 
     @endif
 
-</div>
+    </div>
+
+</li>
 
 @endforeach
+
+</ul>
 
 
 
@@ -547,5 +605,19 @@
 
 <p class="text-slate-400 text-center py-12 thinkra-card">ابدأ بإضافة فصل أولاً.</p>
 
+@endif
+
+@if($canReorder)
+@push('head')
+<style>
+    .sortable-ghost { opacity: 0.45; background: #f3e8ff; }
+    .sortable-chosen { background: #faf5ff; }
+    .sortable-drag { cursor: grabbing; }
+</style>
+@endpush
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script src="{{ asset('js/course-structure-sortable.js') }}"></script>
+@endpush
 @endif
 

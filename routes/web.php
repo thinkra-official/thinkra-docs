@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CourseDocsController;
 use App\Http\Controllers\ShareLinkController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\CourseController as AdminCourseController;
+use App\Http\Controllers\Admin\CourseStructureReorderController as AdminCourseStructureReorderController;
 use App\Http\Controllers\Admin\CourseMemberController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\LessonController as AdminLessonController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Admin\SubSectionController as AdminSubSectionController
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Auth\TeacherAuthController;
 use App\Http\Controllers\Teacher\CourseController as TeacherCourseController;
+use App\Http\Controllers\Teacher\CourseStructureReorderController as TeacherCourseStructureReorderController;
 use App\Http\Controllers\Teacher\DashboardController as TeacherDashboardController;
 use App\Http\Controllers\Teacher\LessonContentController;
 use App\Http\Controllers\Teacher\LessonController;
@@ -86,6 +88,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('courses/{course}/members', [CourseMemberController::class, 'update'])
             ->name('courses.members.update');
 
+        Route::patch('courses/{courseId}/structure/reorder', AdminCourseStructureReorderController::class)
+            ->name('courses.structure.reorder');
         Route::delete('courses/{courseId}/sections/{sectionId}', [AdminSectionController::class, 'destroy'])
             ->name('courses.sections.destroy');
         Route::post('courses/{courseId}/sections/{sectionId}/lessons', [AdminSectionLessonController::class, 'store'])
@@ -128,6 +132,8 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
 
     Route::get('courses', [TeacherCourseController::class, 'index'])->name('courses.index');
 
+    Route::patch('courses/{courseId}/structure/reorder', TeacherCourseStructureReorderController::class)
+        ->name('courses.structure.reorder');
     Route::delete('courses/{courseId}/sections/{sectionId}', [SectionController::class, 'destroy'])
         ->name('sections.destroy');
     Route::post('courses/{courseId}/sections/{sectionId}/lessons', [TeacherSectionLessonController::class, 'store'])
