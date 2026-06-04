@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\LessonHtmlSanitizer;
 use App\Models\Lesson;
 use App\Models\LessonChangeLog;
 use App\Models\LessonVersion;
@@ -138,7 +139,9 @@ class LessonContentService
         return [
             'title' => trim((string) ($data['title'] ?? '')),
             'objective' => $this->nullableString($data['objective'] ?? null),
-            'main_content' => $this->nullableString($data['main_content'] ?? null),
+            'main_content' => $this->nullableString(
+                LessonHtmlSanitizer::clean($data['main_content'] ?? null)
+            ),
             'teacher_notes' => $this->nullableString($data['teacher_notes'] ?? null),
         ];
     }

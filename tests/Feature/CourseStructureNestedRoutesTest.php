@@ -106,7 +106,8 @@ class CourseStructureNestedRoutesTest extends TestCase
             )))
             ->assertOk()
             ->assertSee($d['subLesson']->title)
-            ->assertSee('main_content', false)
+            ->assertSee('معاينة المحتوى', false)
+            ->assertSee('tinymce', false)
             ->assertSee('حفظ الآن');
     }
 

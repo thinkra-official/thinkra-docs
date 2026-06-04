@@ -2,6 +2,10 @@
 
 @section('title', $lesson->title)
 
+@push('head')
+<link rel="stylesheet" href="{{ asset('css/lesson-content.css') }}">
+@endpush
+
 @php
     $lessonShowUrl = $subSection
         ? route('admin.courses.lessons.show', \App\Support\NestedCourseRoute::subSectionLesson($course, $section, $subSection, $lesson))
@@ -28,12 +32,25 @@
     </div>
     @endif
 
-    @if($lesson->main_content)
     <div class="bg-white rounded-2xl border p-5">
-        <h2 class="font-semibold text-thinkra-navy mb-2">المحتوى الرئيسي</h2>
-        <div class="prose prose-sm max-w-none text-slate-700 lesson-content">{!! $lesson->main_content !!}</div>
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <h2 class="font-semibold text-thinkra-navy">المحتوى الرئيسي</h2>
+            @php
+                $editRoute = $subSection
+                    ? 'admin.courses.lessons.edit'
+                    : 'admin.courses.section-lessons.edit';
+                $editParams = $subSection
+                    ? \App\Support\NestedCourseRoute::subSectionLesson($course, $section, $subSection, $lesson)
+                    : \App\Support\NestedCourseRoute::sectionLesson($course, $section, $lesson);
+            @endphp
+            <a href="{{ route($editRoute, $editParams) }}" class="thinkra-btn-primary px-4 py-2 text-sm">تعديل محتوى الدرس</a>
+        </div>
+        @if(filled($lesson->main_content))
+        <div class="thinkra-lesson-prose lesson-content">{!! $lesson->main_content !!}</div>
+        @else
+        <p class="text-slate-400 text-sm">لا يوجد محتوى بعد. اضغط «تعديل محتوى الدرس» لإضافة النص والتنسيق.</p>
+        @endif
     </div>
-    @endif
 
     @if($lesson->teacher_notes)
     <div class="bg-amber-50 rounded-2xl border border-amber-200 p-5">

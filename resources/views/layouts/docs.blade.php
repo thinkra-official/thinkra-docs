@@ -19,6 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ asset('css/docs-reader.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/lesson-content.css') }}">
     @stack('head')
 </head>
 <body class="docs-shell font-sans antialiased" style="font-family: Cairo, system-ui, sans-serif;">

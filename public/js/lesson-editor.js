@@ -187,12 +187,15 @@
 
     document.addEventListener('thinkra-lesson-changed', markDirty);
 
-    document.addEventListener('thinkra-ckeditor-ready', function () {
+    function onEditorReady() {
         baseline = payloadHash(getPayload());
         dirty = false;
         setStatus('saved', 'تم الحفظ');
         checkLocalDraft();
-    });
+    }
+
+    document.addEventListener('thinkra-editor-ready', onEditorReady);
+    document.addEventListener('thinkra-ckeditor-ready', onEditorReady);
 
     form.addEventListener('submit', function () {
         const editor = window.ThinkraEditors?.main_content;
@@ -261,7 +264,7 @@
             panel.innerHTML = `
                 <p class="text-xs text-slate-500 mb-2">${data.created_at_formatted} — ${data.author || ''}</p>
                 <h4 class="font-bold text-thinkra-navy mb-2">${escapeHtml(data.title)}</h4>
-                <div class="prose prose-sm max-w-none text-slate-700">${data.main_content || '<p class="text-slate-400">لا محتوى</p>'}</div>
+                <div class="thinkra-lesson-prose">${data.main_content || '<p class="text-slate-400">لا محتوى</p>'}</div>
             `;
             panel.classList.remove('hidden');
         } catch (e) {

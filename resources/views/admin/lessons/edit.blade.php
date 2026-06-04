@@ -124,7 +124,7 @@
             <div class="thinkra-card p-5">
                 <label class="block text-sm font-semibold mb-2 text-thinkra-navy">المحتوى الرئيسي</label>
                 <p class="text-xs text-slate-400 mb-3">يُحفظ تلقائياً كل 10 ثوانٍ أو بعد 3 ثوانٍ من التوقف عن الكتابة.</p>
-                <x-ckeditor name="main_content" :value="old('main_content', $lesson->main_content)" editor-id="main_content" />
+                <x-tinymce name="main_content" :value="old('main_content', $lesson->main_content)" editor-id="main_content" />
             </div>
 
             <div class="thinkra-card p-5 border-amber-200/80 bg-amber-50/30">
@@ -138,7 +138,7 @@
     </div>
 
     <div x-show="tab === 'versions'" x-cloak>
-        <div id="version-preview-panel" class="hidden thinkra-card p-5 mb-4 border-thinkra-purple/30"></div>
+        <div id="version-preview-panel" class="hidden thinkra-card p-5 mb-4 border-thinkra-purple/30 thinkra-lesson-prose"></div>
 
         @if($versions->isEmpty())
         <p class="text-slate-400 text-sm text-center py-8">لا توجد نسخ محفوظة بعد. تُنشأ نسخة تلقائياً عند كل حفظ مهم.</p>

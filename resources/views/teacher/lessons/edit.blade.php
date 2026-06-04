@@ -126,7 +126,7 @@
             <div class="thinkra-card p-5">
                 <label class="block text-sm font-semibold mb-2 text-thinkra-navy">المحتوى الرئيسي</label>
                 <p class="text-xs text-slate-400 mb-3">يُحفظ تلقائياً كل 10 ثوانٍ أو بعد 3 ثوانٍ من التوقف عن الكتابة.</p>
-                <x-ckeditor name="main_content" :value="old('main_content', $lesson->main_content)" editor-id="main_content" />
+                <x-tinymce name="main_content" :value="old('main_content', $lesson->main_content)" editor-id="main_content" />
             </div>
 
             <div class="thinkra-card p-5 border-amber-200/80 bg-amber-50/30">

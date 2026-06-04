@@ -23,7 +23,7 @@
         </div>
         @endif
 
-        <div class="docs-prose">
+        <div class="docs-prose thinkra-lesson-prose">
             {!! $contentHtml !!}
         </div>
 
