@@ -34,11 +34,20 @@ class Lesson extends Model
         ];
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
+
     protected static function booted(): void
     {
         static::saving(function (Lesson $lesson) {
-            $hasSection = $lesson->section_id !== null;
-            $hasSubSection = $lesson->sub_section_id !== null;
+            if (in_array($lesson->sub_section_id, [0, '0'], true)) {
+                $lesson->sub_section_id = null;
+            }
+
+            $hasSection = $lesson->section_id !== null && $lesson->section_id !== 0;
+            $hasSubSection = $lesson->sub_section_id !== null && $lesson->sub_section_id !== 0;
 
             if ($hasSection === $hasSubSection) {
                 throw ValidationException::withMessages([

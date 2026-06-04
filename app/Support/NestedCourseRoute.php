@@ -27,13 +27,17 @@ final class NestedCourseRoute
         ];
     }
 
-    /** درس مباشرة تحت الفصل */
+    /**
+     * Route parameters for a direct section lesson (not in a sub-section).
+     *
+     * @return array{course: int|string, section: int|string, lesson: int|string}
+     */
     public static function sectionLesson(Course $course, Section $section, Lesson $lesson): array
     {
         return [
-            'course' => $course,
-            'section' => $section,
-            'lesson' => $lesson,
+            'course' => $course->getRouteKey(),
+            'section' => $section->getRouteKey(),
+            'lesson' => $lesson->getRouteKey(),
         ];
     }
 
@@ -45,10 +49,10 @@ final class NestedCourseRoute
         Lesson $lesson
     ): array {
         return [
-            'course' => $course,
-            'section' => $section,
-            'subSection' => $subSection,
-            'lesson' => $lesson,
+            'course' => $course->getRouteKey(),
+            'section' => $section->getRouteKey(),
+            'subSection' => $subSection->getRouteKey(),
+            'lesson' => $lesson->getRouteKey(),
         ];
     }
 

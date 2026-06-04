@@ -28,4 +28,15 @@ class SubSection extends Model
             ->whereNull('section_id')
             ->orderBy('sort_order');
     }
+
+    public function resolveChildRouteBinding($childType, $value, $field = null)
+    {
+        if ($childType === 'lesson') {
+            $field = $field ?: 'id';
+
+            return $this->lessons()->where($field, $value)->first();
+        }
+
+        return parent::resolveChildRouteBinding($childType, $value, $field);
+    }
 }

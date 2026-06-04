@@ -239,7 +239,7 @@ class StabilityTest extends TestCase
         $data = $this->createStructure();
         $admin = \App\Models\User::factory()->create(['role' => UserRole::Admin]);
 
-        $this->actingAs($admin)
+        $response = $this->actingAs($admin)
             ->post(route('admin.courses.section-lessons.store', [
                 'course' => $data['course'],
                 'section' => $data['section'],
@@ -252,9 +252,23 @@ class StabilityTest extends TestCase
             ->assertRedirect()
             ->assertSessionHas('success');
 
-        $this->assertNotNull(
-            $data['section']->directLessons()->where('title', 'Admin Direct Lesson')->first()
-        );
+        $lesson = $data['section']->directLessons()->where('title', 'Admin Direct Lesson')->first();
+        $this->assertNotNull($lesson);
+        $this->assertSame($data['section']->id, $lesson->section_id);
+        $this->assertNull($lesson->sub_section_id);
+
+        $response->assertRedirect(route(
+            'admin.courses.section-lessons.show',
+            NestedCourseRoute::sectionLesson($data['course'], $data['section'], $lesson)
+        ));
+
+        $this->actingAs($admin)
+            ->get(route(
+                'admin.courses.section-lessons.show',
+                NestedCourseRoute::sectionLesson($data['course'], $data['section'], $lesson)
+            ))
+            ->assertOk()
+            ->assertSee('Admin Direct Lesson');
 
         $this->get(route('admin.courses.section-lessons.store', [
             'course' => $data['course'],

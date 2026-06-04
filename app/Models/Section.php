@@ -39,4 +39,18 @@ class Section extends Model
     {
         return $this->lessons();
     }
+
+    /**
+     * Scoped route binding: only direct lessons (section_id set, no sub-section).
+     */
+    public function resolveChildRouteBinding($childType, $value, $field = null)
+    {
+        if ($childType === 'lesson') {
+            $field = $field ?: 'id';
+
+            return $this->directLessons()->where($field, $value)->first();
+        }
+
+        return parent::resolveChildRouteBinding($childType, $value, $field);
+    }
 }
