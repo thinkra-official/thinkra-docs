@@ -37,7 +37,7 @@
 </div>
 
 <div class="mt-8 thinkra-card p-5 border-red-200">
-    <form method="POST" action="{{ route($subSection ? 'admin.courses.lessons.destroy' : 'admin.courses.section-lessons.destroy', $subSection ? \App\Support\NestedCourseRoute::subSectionLesson($course, $section, $subSection, $lesson) : \App\Support\NestedCourseRoute::sectionLesson($course, $section, $lesson)) }}"
+    <form method="POST" action="{{ route($subSection ? 'admin.courses.lessons.destroy' : 'admin.courses.section-lessons.destroy', $subSection ? \App\Support\NestedCourseRoute::subSectionLessonDestroy($course, $section, $subSection, $lesson) : \App\Support\NestedCourseRoute::sectionLessonDestroy($course, $section, $lesson)) }}"
           onsubmit="return confirm('هل تريد حذف هذا الدرس نهائياً؟')">
         @csrf @method('DELETE')
         <button type="submit" class="text-sm text-red-600 font-semibold hover:underline">حذف الدرس</button>

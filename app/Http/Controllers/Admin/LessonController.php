@@ -28,6 +28,7 @@ use App\Support\NestedCourseRoute;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 
@@ -86,32 +87,35 @@ class LessonController extends Controller
 
 
 
-    public function destroy(Course $course, Section $section, SubSection $subSection, Lesson $lesson): RedirectResponse
-
-    {
-
-        $this->ensureSectionInCourse($course, $section);
-
-        $this->ensureSubSectionInSection($section, $subSection);
+    public function destroy(
+        int|string $courseId,
+        int|string $sectionId,
+        int|string $subSectionId,
+        int|string $lessonId
+    ): RedirectResponse {
+        [$course, $section, $subSection, $lesson] = $this->resolveSubSectionLesson(
+            $courseId,
+            $sectionId,
+            $subSectionId,
+            $lessonId
+        );
 
         $this->assertLessonBelongsToSubSection($lesson, $subSection);
 
-
+        Log::info('Admin LessonController@destroy hit', [
+            'courseId' => $course->id,
+            'sectionId' => $section->id,
+            'subSectionId' => $subSection->id,
+            'lessonId' => $lesson->id,
+        ]);
 
         $title = $lesson->title;
-
         $lesson->delete();
 
-
-
         return redirect()
-
             ->route('admin.courses.show', $course)
-
             ->with('success', "تم حذف الدرس «{$title}».");
-
     }
-
 
 
     public function move(Request $request, Course $course, Section $section, SubSection $subSection, Lesson $lesson): RedirectResponse

@@ -53,9 +53,9 @@ class SectionLessonController extends Controller
             ->with('success', 'تم إنشاء الدرس.');
     }
 
-    public function destroy(Course $course, Section $section, Lesson $lesson): RedirectResponse
+    public function destroy(int|string $courseId, int|string $sectionId, int|string $lessonId): RedirectResponse
     {
-        $this->ensureSectionInCourse($course, $section);
+        [$course, $section, $lesson] = $this->resolveDirectSectionLesson($courseId, $sectionId, $lessonId);
         $this->assertLessonBelongsToSection($lesson, $section);
 
         $title = $lesson->title;

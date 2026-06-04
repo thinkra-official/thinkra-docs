@@ -41,6 +41,16 @@ final class NestedCourseRoute
         ];
     }
 
+    /** Route parameters for destroying a direct section lesson (raw IDs). */
+    public static function sectionLessonDestroy(Course $course, Section $section, Lesson $lesson): array
+    {
+        return [
+            'courseId' => $course->id,
+            'sectionId' => $section->id,
+            'lessonId' => $lesson->id,
+        ];
+    }
+
     /** درس داخل قسم فرعي */
     public static function subSectionLesson(
         Course $course,
@@ -53,6 +63,21 @@ final class NestedCourseRoute
             'section' => $section->getRouteKey(),
             'subSection' => $subSection->getRouteKey(),
             'lesson' => $lesson->getRouteKey(),
+        ];
+    }
+
+    /** Route parameters for destroying a sub-section lesson (raw IDs). */
+    public static function subSectionLessonDestroy(
+        Course $course,
+        Section $section,
+        SubSection $subSection,
+        Lesson $lesson
+    ): array {
+        return [
+            'courseId' => $course->id,
+            'sectionId' => $section->id,
+            'subSectionId' => $subSection->id,
+            'lessonId' => $lesson->id,
         ];
     }
 

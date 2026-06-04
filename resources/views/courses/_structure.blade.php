@@ -241,7 +241,7 @@
 
                 @if($canEditContent)
 
-                <form method="POST" action="{{ $routeSectionLesson('destroy', ['course' => $course, 'section' => $section, 'lesson' => $lesson]) }}"
+                <form method="POST" action="{{ $isTeacher ? route('teacher.section-lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'lessonId' => $lesson->id]) : route('admin.courses.section-lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'lessonId' => $lesson->id]) }}"
 
                       onsubmit="return confirm('هل تريد حذف الدرس «{{ $lesson->title }}» نهائياً؟')">
 
@@ -426,7 +426,7 @@
 
                     @if($canEditContent)
 
-                    <form method="POST" action="{{ $routeSubLesson('destroy', ['course' => $course, 'section' => $section, 'subSection' => $subSection, 'lesson' => $lesson]) }}"
+                    <form method="POST" action="{{ $isTeacher ? route('teacher.lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'subSectionId' => $subSection->id, 'lessonId' => $lesson->id]) : route('admin.courses.lessons.destroy', ['courseId' => $course->id, 'sectionId' => $section->id, 'subSectionId' => $subSection->id, 'lessonId' => $lesson->id]) }}"
 
                           onsubmit="return confirm('هل تريد حذف الدرس «{{ $lesson->title }}» نهائياً؟')">
 

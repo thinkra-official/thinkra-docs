@@ -92,6 +92,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->name('courses.sub-sections.store');
         Route::post('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons', [AdminLessonController::class, 'store'])
             ->name('courses.lessons.store');
+        Route::delete('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}', [AdminSectionLessonController::class, 'destroy'])
+            ->name('courses.section-lessons.destroy');
+        Route::delete('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons/{lessonId}', [AdminLessonController::class, 'destroy'])
+            ->name('courses.lessons.destroy');
 
         Route::prefix('courses/{course}')->name('courses.')->scopeBindings()->group(function () {
             Route::post('sections', [AdminSectionController::class, 'store'])->name('sections.store');
@@ -100,7 +104,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::patch('sections/{section}/move', [AdminSectionController::class, 'move'])->name('sections.move');
 
             Route::get('sections/{section}/lessons/{lesson}', [AdminSectionLessonController::class, 'show'])->name('section-lessons.show');
-            Route::delete('sections/{section}/lessons/{lesson}', [AdminSectionLessonController::class, 'destroy'])->name('section-lessons.destroy');
             Route::patch('sections/{section}/lessons/{lesson}/move', [AdminSectionLessonController::class, 'move'])->name('section-lessons.move');
 
             Route::put('sections/{section}/sub-sections/{subSection}', [AdminSubSectionController::class, 'update'])->name('sub-sections.update');
@@ -108,7 +111,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::patch('sections/{section}/sub-sections/{subSection}/move', [AdminSubSectionController::class, 'move'])->name('sub-sections.move');
 
             Route::get('sections/{section}/sub-sections/{subSection}/lessons/{lesson}', [AdminLessonController::class, 'show'])->name('lessons.show');
-            Route::delete('sections/{section}/sub-sections/{subSection}/lessons/{lesson}', [AdminLessonController::class, 'destroy'])->name('lessons.destroy');
             Route::patch('sections/{section}/sub-sections/{subSection}/lessons/{lesson}/move', [AdminLessonController::class, 'move'])->name('lessons.move');
         });
     });
@@ -126,6 +128,10 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
         ->name('sub-sections.store');
     Route::post('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons', [LessonController::class, 'store'])
         ->name('lessons.store');
+    Route::delete('courses/{courseId}/sections/{sectionId}/lessons/{lessonId}', [TeacherSectionLessonController::class, 'destroy'])
+        ->name('section-lessons.destroy');
+    Route::delete('courses/{courseId}/sections/{sectionId}/sub-sections/{subSectionId}/lessons/{lessonId}', [LessonController::class, 'destroy'])
+        ->name('lessons.destroy');
 
     Route::prefix('courses/{course}')->scopeBindings()->group(function () {
         Route::get('/', [TeacherCourseController::class, 'show'])->name('courses.show');
@@ -137,7 +143,6 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
 
         Route::get('sections/{section}/lessons/{lesson}/edit', [TeacherSectionLessonController::class, 'edit'])->name('section-lessons.edit');
         Route::put('sections/{section}/lessons/{lesson}', [TeacherSectionLessonController::class, 'update'])->name('section-lessons.update');
-        Route::delete('sections/{section}/lessons/{lesson}', [TeacherSectionLessonController::class, 'destroy'])->name('section-lessons.destroy');
         Route::patch('sections/{section}/lessons/{lesson}/status', [TeacherSectionLessonController::class, 'updateStatus'])->name('section-lessons.status');
         Route::patch('sections/{section}/lessons/{lesson}/move', [TeacherSectionLessonController::class, 'move'])->name('section-lessons.move');
         Route::post('sections/{section}/lessons/{lesson}/autosave', [LessonContentController::class, 'autosaveSection'])->name('section-lessons.autosave');
@@ -150,7 +155,6 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
 
         Route::get('sections/{section}/sub-sections/{subSection}/lessons/{lesson}/edit', [LessonController::class, 'edit'])->name('lessons.edit');
         Route::put('sections/{section}/sub-sections/{subSection}/lessons/{lesson}', [LessonController::class, 'update'])->name('lessons.update');
-        Route::delete('sections/{section}/sub-sections/{subSection}/lessons/{lesson}', [LessonController::class, 'destroy'])->name('lessons.destroy');
         Route::patch('sections/{section}/sub-sections/{subSection}/lessons/{lesson}/status', [LessonController::class, 'updateStatus'])->name('lessons.status');
         Route::patch('sections/{section}/sub-sections/{subSection}/lessons/{lesson}/move', [LessonController::class, 'move'])->name('lessons.move');
 

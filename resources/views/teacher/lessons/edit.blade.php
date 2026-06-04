@@ -7,6 +7,7 @@
     $inSubSection = $inSubSection ?? ($subSection !== null);
     if ($inSubSection) {
         $lessonRoute = NestedCourseRoute::subSectionLesson($course, $section, $subSection, $lesson);
+        $lessonDestroyRoute = NestedCourseRoute::subSectionLessonDestroy($course, $section, $subSection, $lesson);
         $versionPlaceholder = NestedCourseRoute::subSectionVersion($course, $section, $subSection, $lesson, '__VERSION__');
         $statusRoute = 'teacher.lessons.status';
         $updateRoute = 'teacher.lessons.update';
@@ -16,6 +17,7 @@
         $versionRestoreRoute = 'teacher.lessons.versions.restore';
     } else {
         $lessonRoute = NestedCourseRoute::sectionLesson($course, $section, $lesson);
+        $lessonDestroyRoute = NestedCourseRoute::sectionLessonDestroy($course, $section, $lesson);
         $versionPlaceholder = NestedCourseRoute::sectionVersion($course, $section, $lesson, '__VERSION__');
         $statusRoute = 'teacher.section-lessons.status';
         $updateRoute = 'teacher.section-lessons.update';
@@ -185,7 +187,7 @@
 </div>
 
 <div class="thinkra-card p-5 border-red-200 mt-6">
-    <form method="POST" action="{{ route($destroyRoute, $lessonRoute) }}"
+    <form method="POST" action="{{ route($destroyRoute, $lessonDestroyRoute) }}"
           onsubmit="return confirm('هل تريد حذف هذا الدرس نهائياً؟')">
         @csrf @method('DELETE')
         <button type="submit" class="text-sm text-red-600 font-semibold hover:underline">حذف الدرس</button>

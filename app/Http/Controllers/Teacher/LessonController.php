@@ -213,36 +213,30 @@ class LessonController extends Controller
 
 
 
-    public function destroy(Course $course, Section $section, SubSection $subSection, Lesson $lesson): RedirectResponse
-
-    {
+    public function destroy(
+        int|string $courseId,
+        int|string $sectionId,
+        int|string $subSectionId,
+        int|string $lessonId
+    ): RedirectResponse {
+        [$course, $section, $subSection, $lesson] = $this->resolveSubSectionLesson(
+            $courseId,
+            $sectionId,
+            $subSectionId,
+            $lessonId
+        );
 
         $this->ensureCourseAccess($course);
-
-        $this->ensureSectionInCourse($course, $section);
-
-        $this->ensureSubSectionInSection($section, $subSection);
-
         $this->assertLessonBelongsToSubSection($lesson, $subSection);
-
         $this->authorize('update', $lesson);
 
-
-
         $title = $lesson->title;
-
         $lesson->delete();
 
-
-
         return redirect()
-
             ->route('teacher.courses.show', $course)
-
             ->with('success', "تم حذف الدرس «{$title}».");
-
     }
-
 
 
     public function move(Request $request, Course $course, Section $section, SubSection $subSection, Lesson $lesson): RedirectResponse
